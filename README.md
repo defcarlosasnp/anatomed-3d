@@ -46,6 +46,7 @@ npm run build
 | 🏷 Etiquetas | Nombres sobre el modelo |
 | ▶ Animación | Latido, respiración, peristaltismo o flujo tubular, según el órgano |
 | 🧭 Recorrido | Guías paso a paso (con menú si hay varias) |
+| ☁ Mis datos | Exportar e importar un respaldo (.json) de notas y progreso, o pasarlos a otro dispositivo con un código QR o un enlace (los datos viajan dentro del enlace, sin servidor) |
 | ✨ Visual | Calidad alta (oclusión ambiental, sombra de contacto, contorno de selección) o básica para equipos modestos |
 | 🎯 Quiz | 4 modos: clic en la estructura, escribir el nombre, preguntas clínicas de alternativas y repaso de errores (repite más lo que fallas) |
 
@@ -57,7 +58,7 @@ src/viewer.js           motor 3D (Three.js): carga, picking, corte, cámara, eti
 src/clipping.js         cortes: plano/lámina, inclinación y relleno (stencil)
 src/visuals.js          calidad visual: GTAO, contorno de selección, sombras
 src/effects/            latido + conducción, cuerdas tendinosas, respiración, estómago, nefrona
-src/features/           quiz, progreso y notas (localStorage), ubicación de puntos y cortes
+src/features/           quiz, progreso y notas (localStorage), respaldo y traspaso (sync.js), ubicación de puntos y cortes
 src/organs/*.js         contenido de cada órgano (textos, grupos, colores, recorridos, fisiología)
 src/organs/extras.js    cortes clínicos, puntos clínicos y preguntas clínicas por órgano
 src/main.js             interfaz
@@ -90,5 +91,5 @@ Si publicas la app, mantén estas atribuciones. Los modelos derivados de Z-Anato
 - **Elementos esquemáticos:** el sistema de conducción, las cuerdas tendinosas, las capas gástricas y la nefrona se generan por código. Son correctos en su organización, pero no son mallas anatómicas.
 - **Regiones del estómago:** son aproximadas. Se calculan a partir de los puntos de referencia de Z-Anatomy.
 - **Lado de los modelos:** el riñón es el izquierdo. Los núcleos del tálamo y de la amígdala están ocultos por defecto, porque se superponen a la estructura completa.
-- **Datos guardados:** las notas y el progreso se guardan solo en el navegador donde estudias. No se sincronizan entre dispositivos.
+- **Datos guardados:** las notas y el progreso se guardan en el navegador. Para llevarlos a otro equipo usa ☁ Mis datos (QR, enlace o archivo). Al importar se fusionan: se suman las revisadas, del quiz se conserva el máximo y en las notas gana la versión más reciente. No hay sincronización automática.
 - **Uso:** el contenido es de apoyo al estudio y no reemplaza la bibliografía de los ramos.

@@ -13,6 +13,7 @@
       <button class="icon-btn mobile-only" id="btn-left" aria-label="Estructuras">☰</button>
       <div class="brand">AnatoMed <span>3D</span></div>
       <nav class="organ-tabs" id="organ-tabs"></nav>
+      <button class="quality-btn" id="btn-data" title="Respaldar o pasar tus notas y progreso a otro dispositivo">☁ Mis datos</button>
       <button class="quality-btn" id="btn-quality">✨ Visual: alta</button>
       <button class="icon-btn mobile-only" id="btn-right" aria-label="Información">ⓘ</button>
     </header>
@@ -117,6 +118,32 @@
         </footer>
       </aside>
     </main>
+
+    <div class="modal hidden" id="data-modal" role="dialog" aria-modal="true" aria-labelledby="data-title">
+      <div class="modal-box">
+        <div class="modal-head"><h3 id="data-title">☁ Mis datos de estudio</h3><button class="x" id="data-close" aria-label="Cerrar">✕</button></div>
+        <p class="small muted" id="data-summary"></p>
+        <section>
+          <h4>Pasar a otro dispositivo</h4>
+          <p class="small muted">Escanea el código con la cámara del celular, o copia el enlace y ábrelo en el otro equipo. Tus notas y tu progreso se fusionan con lo que ya tengas allí. Los datos van dentro del enlace: no se suben a ningún servidor.</p>
+          <div class="qr-wrap"><canvas id="data-qr"></canvas><p class="small" id="data-qr-msg"></p></div>
+          <div class="row"><button id="data-copy">🔗 Copiar enlace</button><button id="data-share" class="hidden">📤 Compartir</button></div>
+        </section>
+        <section>
+          <h4>Respaldo en archivo</h4>
+          <p class="small muted">Guarda un archivo .json con todo (sirve aunque tengas muchas notas) e impórtalo en cualquier navegador.</p>
+          <div class="row">
+            <button id="data-export" class="primary">⬇ Exportar respaldo</button>
+            <label class="btn">⬆ Importar respaldo<input type="file" id="data-import" accept=".json,application/json" hidden /></label>
+          </div>
+        </section>
+        <section>
+          <h4>Borrar</h4>
+          <button id="data-reset" class="danger">🗑 Borrar todo mi progreso y notas de este navegador</button>
+        </section>
+      </div>
+    </div>
+    <div class="toast hidden" id="toast"></div>
 
     <script type="module" src="/src/main.js"></script>
   </body>

@@ -423,3 +423,20 @@ canvas.placing { cursor: crosshair !important; }
 .quality-btn:hover { border-color: var(--accent); color: var(--text); }
 .chip.gaze { max-width: min(520px, 80vw); white-space: normal; color: #dfeee9; }
 @media (max-width: 860px) { .quality-btn { padding: 4px 8px; font-size: 11px; } }
+
+/* modal de datos */
+.modal { position: fixed; inset: 0; background: rgba(5, 8, 12, 0.6); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+.modal-box { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; width: min(460px, 100%); max-height: 90vh; overflow-y: auto; padding: 16px 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.modal-head { display: flex; justify-content: space-between; align-items: center; }
+.modal-head h3 { margin: 0; font-size: 17px; }
+.modal section { border-top: 1px solid var(--line); padding-top: 10px; margin-top: 12px; }
+.modal h4 { margin: 0 0 4px; font-size: 12px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--accent-2); }
+.modal p { margin: 0 0 8px; }
+.modal .row { display: flex; gap: 8px; flex-wrap: wrap; }
+.modal button, .modal .btn { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; font-size: 13px; color: var(--text); cursor: pointer; }
+.modal button.primary { background: var(--accent); border-color: var(--accent); color: #062421; font-weight: 600; }
+.modal button.danger { border-color: rgba(226,103,93,0.5); color: #f0a49d; }
+.qr-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 6px 0 10px; }
+.qr-wrap canvas { border-radius: 8px; background: #fff; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #1c232c; border: 1px solid var(--accent); color: var(--text); padding: 10px 16px; border-radius: 10px; z-index: 60; font-size: 13px; max-width: calc(100% - 32px); box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+@media (max-width: 860px) { #btn-data { padding: 4px 8px; font-size: 11px; } }

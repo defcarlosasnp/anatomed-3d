@@ -9,7 +9,8 @@ import { createBreathing } from './effects/breathing.js';
 import { createNephronFlow } from './effects/nephronFlow.js';
 import { createEye, GAZES } from './effects/eye.js';
 import { createQuiz, MODES } from './features/quiz.js';
-import { Progress, Notes, load as loadPref, save as savePref } from './features/store.js';
+import { Progress, Notes, load as loadPref, save as savePref, summary, resetAll } from './features/store.js';
+import { downloadBackup, importBackupText, buildSyncLink, readSyncFromUrl, applySync, drawQR } from './features/sync.js';
 import { resolvePoint, resolveCut } from './features/geometry.js';
 
 const $ = (s) => document.querySelector(s);
@@ -835,8 +836,113 @@ $('#btn-left').onclick = () => togglePanel('#panel-left');
 $('#btn-right').onclick = () => togglePanel('#panel-right');
 $('#viewport').addEventListener('pointerdown', () => document.querySelectorAll('.panel').forEach((x) => x.classList.remove('open')));
 
+// ======================================================= mis datos (respaldo)
+function toast(msg, ms = 4000) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.remove('hidden');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => t.classList.add('hidden'), ms);
+}
+function describe(res) {
+  const parts = [];
+  if (res.viewed) parts.push(`${res.viewed} estructuras revisadas nuevas`);
+  if (res.notesAdded) parts.push(`${res.notesAdded} notas nuevas`);
+  if (res.notesUpdated) parts.push(`${res.notesUpdated} notas actualizadas`);
+  return parts.length ? `Datos importados: ${parts.join(', ')}.` : 'Datos importados: no había nada nuevo.';
+}
+function refreshAfterImport() {
+  if (!organ) return;
+  buildNotePins();
+  buildTree();
+  updateProgress();
+  renderInfo();
+}
+let lastLink = '';
+async function openDataModal() {
+  const sm = summary();
+  $('#data-summary').textContent = `En este navegador: ${sm.viewed} estructuras revisadas · ${sm.answers} respuestas de quiz · ${sm.notes} notas.`;
+  $('#data-modal').classList.remove('hidden');
+  const msg = $('#data-qr-msg');
+  msg.textContent = 'Generando código…';
+  try {
+    lastLink = await buildSyncLink();
+    const fits = await drawQR($('#data-qr'), lastLink);
+    $('#data-qr').classList.toggle('hidden', !fits);
+    msg.textContent = fits ? '' : 'Tienes demasiados datos para un QR: usa "Copiar enlace" o el respaldo en archivo.';
+  } catch {
+    lastLink = '';
+    $('#data-qr').classList.add('hidden');
+    msg.textContent = 'Tu navegador no permite generar el enlace. Usa el respaldo en archivo.';
+  }
+  $('#data-share').classList.toggle('hidden', !navigator.share || !lastLink);
+}
+$('#btn-data').onclick = openDataModal;
+$('#data-close').onclick = () => $('#data-modal').classList.add('hidden');
+$('#data-modal').addEventListener('pointerdown', (e) => e.target.id === 'data-modal' && $('#data-modal').classList.add('hidden'));
+document.addEventListener('keydown', (e) => e.key === 'Escape' && $('#data-modal').classList.add('hidden'));
+$('#data-copy').onclick = async () => {
+  if (!lastLink) return;
+  try {
+    await navigator.clipboard.writeText(lastLink);
+    toast('Enlace copiado. Ábrelo en el otro dispositivo.');
+  } catch {
+    prompt('Copia este enlace:', lastLink);
+  }
+};
+$('#data-share').onclick = () => navigator.share?.({ title: 'AnatoMed 3D — mis datos', text: 'Abre este enlace para importar mis notas y progreso:', url: lastLink }).catch(() => {});
+$('#data-export').onclick = () => {
+  downloadBackup();
+  toast('Respaldo descargado.');
+};
+$('#data-import').onchange = async (e) => {
+  const file = e.target.files?.[0];
+  e.target.value = '';
+  if (!file) return;
+  try {
+    const res = importBackupText(await file.text());
+    refreshAfterImport();
+    $('#data-modal').classList.add('hidden');
+    toast(describe(res), 6000);
+  } catch (err) {
+    toast(err.message, 6000);
+  }
+};
+$('#data-reset').onclick = () => {
+  if (!confirm('¿Borrar TODO tu progreso, estadísticas del quiz y notas de este navegador? Esto no se puede deshacer (exporta un respaldo antes si quieres conservarlos).')) return;
+  resetAll();
+  refreshAfterImport();
+  $('#data-modal').classList.add('hidden');
+  toast('Progreso y notas borrados.');
+};
+
+/** Al abrir un enlace #sync=..., ofrece importar los datos y limpia la URL. */
+async function handleSyncLink() {
+  if (!location.hash.startsWith('#sync=')) return;
+  try {
+    const data = await readSyncFromUrl();
+    history.replaceState(null, '', location.pathname);
+    const sm = summary(data);
+    if (confirm(`Este enlace trae datos de AnatoMed 3D:\n• ${sm.viewed} estructuras revisadas\n• ${sm.answers} respuestas de quiz\n• ${sm.notes} notas\n\n¿Importarlos y fusionarlos con los de este dispositivo?`)) {
+      const res = applySync(data);
+      setTimeout(() => toast(describe(res), 6000), 500);
+    }
+  } catch {
+    history.replaceState(null, '', location.pathname);
+    setTimeout(() => toast('El enlace de datos está dañado o incompleto.', 6000), 500);
+  }
+}
+
 // ============================================================ inicio
 buildTabs();
 const fromHash = () => organs.find((o) => `#${o.id}` === location.hash)?.id;
-window.addEventListener('hashchange', () => fromHash() && loadOrgan(fromHash()));
-loadOrgan(fromHash() || organs[0].id);
+window.addEventListener('hashchange', () => {
+  if (location.hash.startsWith('#sync=')) {
+    const current = organ?.id;
+    handleSyncLink().finally(() => {
+      refreshAfterImport();
+      if (current) history.replaceState(null, '', `#${current}`);
+    });
+  } else if (fromHash()) loadOrgan(fromHash());
+});
+handleSyncLink().finally(() => loadOrgan(fromHash() || organs[0].id));

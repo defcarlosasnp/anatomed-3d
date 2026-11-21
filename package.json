@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Atlas anatómico 3D interactivo (corazón y estómago) con modelos de Z-Anatomy",
+  "description": "Atlas anatómico 3D interactivo para estudiar anatomía y fisiología",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "qrcode": "1.5.4",
     "three": "0.170.0"
   },
   "devDependencies": {
