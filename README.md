@@ -2,6 +2,8 @@
 
 Atlas anatómico 3D interactivo para estudiar anatomía y fisiología en el navegador.
 
+**👉 Abrir la app: https://defcarlosasnp.github.io/anatomed-3d/**
+
 ## Cómo usarlo
 
 ```bash
