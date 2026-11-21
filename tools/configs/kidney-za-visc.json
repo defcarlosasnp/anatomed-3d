@@ -1,0 +1,9 @@
+{
+  "transform": "T-kidney.json",
+  "verbose": true,
+  "parts": [
+    {"key": "pelvis", "src": "Renal pelvis.l"},
+    {"key": "ureter", "src": "Ureter.l"},
+    {"key": "suprarenal", "src": "Suprarenal gland.l"}
+  ]
+}

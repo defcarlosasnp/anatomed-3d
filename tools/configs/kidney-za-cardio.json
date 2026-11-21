@@ -1,0 +1,13 @@
+{
+  "transform": "T-kidney.json",
+  "verbose": true,
+  "parts": [
+    {"key": "renal_a", "src": "Left renal artery"},
+    {"key": "renal_a_ant", "src": "Anterior branch of renal artery.l"},
+    {"key": "renal_a_post", "src": "Posterior branch of renal artery.l"},
+    {"key": "intrarenal_a", "src": "Intrarenal arteries of left kidney"},
+    {"key": "suprarenal_a", "src": "Inferior suprarenal artery.l"},
+    {"key": "renal_v", "src": "Left renal vein"},
+    {"key": "intrarenal_v", "src": "Intrarenal veins of left kidney"}
+  ]
+}

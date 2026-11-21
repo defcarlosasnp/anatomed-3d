@@ -1,0 +1,15 @@
+{
+  "source": { "file": "../../sources/hra/VH_M_Heart.glb", "nodes": ["VH_M_left_cardiac_atrium", "VH_M_right_cardiac_atrium", "VH_M_heart_right_ventricle", "VH_M_heart_left_ventricle", "VH_M_interventricular_septum"] },
+  "target": { "file": "../../sources/za/CardioVascular41.glb", "nodes": ["Right atrium", "Right ventricle", "Left atrium", "Left ventricle"] },
+  "pairs": [
+    [["VH_M_right_cardiac_atrium"], ["Right atrium"]],
+    [["VH_M_heart_right_ventricle"], ["Right ventricle"]],
+    [["VH_M_left_cardiac_atrium"], ["Left atrium"]],
+    [["VH_M_heart_left_ventricle", "VH_M_interventricular_septum"], ["Left ventricle"]],
+    [["VH_M_aortic_valve"], ["Left coronary leaflet", "Non-coronary leaflet", "Right coronary leaflet"]],
+    [["VH_M_pulmonary_valve"], ["Anterior semilunar leaflet of pulmonary valve", "Left semilunar leaflet of pulmonary valve", "Right semilunar leaflet of pulmonary valve"]],
+    [["VH_M_tricuspid_valve"], ["Inferior leaflet of right atrioventricular valve", "Septal leaflet of right atrioventricular valve"]]
+  ],
+  "iterations": 40,
+  "trim": 0.75
+}

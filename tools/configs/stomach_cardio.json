@@ -1,0 +1,13 @@
+{
+  "landmarkScopes": ["__none__"],
+  "parts": [
+    {"key": "celiac", "src": "Coeliac trunk"},
+    {"key": "lga", "src": "Left gastric artery"},
+    {"key": "splenic", "src": "Splenic artery"},
+    {"key": "cha", "src": "Common hepatic artery"},
+    {"key": "pha", "src": "Proper hepatic artery"},
+    {"key": "gda", "src": "Gastroduodenal artery"},
+    {"key": "abd_ao", "src": "Abdominal aorta"},
+    {"key": "portal", "src": "Hepatic portal vein"}
+  ]
+}

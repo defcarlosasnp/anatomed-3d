@@ -1,0 +1,17 @@
+{
+  "verbose": true,
+  "parts": [
+    {"key": "portal", "src": "Hepatic portal vein"},
+    {"key": "splenic_v", "src": "Splenic vein"},
+    {"key": "smv", "src": "Superior mesenteric vein"},
+    {"key": "hep_veins", "src": "Hepatic veins"},
+    {"key": "ivc_abd", "src": "Inferior vena cava (abdominal part)"},
+    {"key": "ivc_th", "src": "Inferior vena cava (thoracic part)"},
+    {"key": "pha", "src": "Proper hepatic artery"},
+    {"key": "cha", "src": "Common hepatic artery"},
+    {"key": "celiac", "src": "Coeliac trunk"},
+    {"key": "gda", "src": "Gastroduodenal artery"},
+    {"key": "splenic_a", "src": "Splenic artery"},
+    {"key": "abd_ao", "src": "Abdominal aorta"}
+  ]
+}

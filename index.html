@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AnatoMed 3D</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫀</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="topbar">
+      <button class="icon-btn mobile-only" id="btn-left" aria-label="Estructuras">☰</button>
+      <div class="brand">AnatoMed <span>3D</span></div>
+      <nav class="organ-tabs" id="organ-tabs"></nav>
+      <button class="icon-btn mobile-only" id="btn-right" aria-label="Información">ⓘ</button>
+    </header>
+
+    <main class="layout">
+      <aside class="panel left" id="panel-left">
+        <div class="panel-head">
+          <h2 id="organ-title">—</h2>
+          <p id="organ-sub" class="muted"></p>
+          <input id="search" type="search" placeholder="Buscar estructura…" autocomplete="off" />
+        </div>
+        <div class="panel-body" id="tree"></div>
+      </aside>
+
+      <section class="viewport" id="viewport">
+        <div id="loading" class="loading"><div class="spinner"></div><span>Cargando modelo…</span></div>
+        <div id="tooltip" class="tooltip hidden"></div>
+
+        <div class="hud-top" id="hud-top"></div>
+
+        <div class="ecg hidden" id="ecg">
+          <div class="ecg-head">
+            <span id="ecg-phase">—</span>
+            <label class="bpm"><span id="rate-label">FC</span> <input type="range" id="bpm" min="40" max="160" value="60" /> <b id="bpm-val">60</b> <span id="rate-unit">lpm</span></label>
+          </div>
+          <canvas id="ecg-canvas" width="560" height="110"></canvas>
+          <div class="valves" id="valve-state"></div>
+        </div>
+
+        <div class="card hidden" id="tour-card">
+          <div class="card-head"><span id="tour-step">1/1</span><button class="x" id="tour-close" aria-label="Cerrar">✕</button></div>
+          <h3 id="tour-title"></h3>
+          <p id="tour-text"></p>
+          <div class="card-actions"><button id="tour-prev">← Anterior</button><button id="tour-next" class="primary">Siguiente →</button></div>
+        </div>
+
+        <div class="card hidden" id="quiz-card">
+          <div class="card-head"><span id="quiz-progress"></span><button class="x" id="quiz-close" aria-label="Cerrar">✕</button></div>
+          <p class="muted small">Haz clic en el modelo sobre:</p>
+          <h3 id="quiz-target"></h3>
+          <p id="quiz-feedback" class="feedback"></p>
+          <div class="card-actions"><button id="quiz-skip">Saltar</button><button id="quiz-next" class="primary hidden">Siguiente →</button></div>
+        </div>
+
+        <div class="toolbar" id="toolbar">
+          <button data-act="reset" title="Restablecer vista">⟲ Vista</button>
+          <button data-act="labels" title="Etiquetas" class="toggle" id="btn-labels">🏷 Etiquetas</button>
+          <div class="tool-group">
+            <button data-act="clip" class="toggle" id="btn-clip" title="Plano de corte">✂ Corte</button>
+            <div class="tool-pop hidden" id="clip-pop">
+              <div class="seg" id="clip-axis">
+                <button data-axis="x" class="on">Sagital</button><button data-axis="y">Transversal</button><button data-axis="z">Coronal</button>
+              </div>
+              <input type="range" id="clip-pos" min="0" max="1000" value="500" />
+              <label class="chk"><input type="checkbox" id="clip-flip" /> Invertir lado</label>
+            </div>
+          </div>
+          <div class="tool-group">
+            <button data-act="xray" class="toggle" id="btn-xray" title="Transparencia de la capa externa">◐ Transparencia</button>
+            <div class="tool-pop hidden" id="xray-pop">
+              <span class="small muted" id="xray-label">Capa externa</span>
+              <input type="range" id="xray-val" min="5" max="100" value="25" />
+            </div>
+          </div>
+          <button data-act="anim" class="toggle" id="btn-anim">▶ Animar</button>
+          <button data-act="extra" class="toggle hidden" id="btn-extra"></button>
+          <button data-act="tour" id="btn-tour">🧭 Recorrido</button>
+          <div class="tool-pop menu hidden" id="tour-pop"></div>
+          <button data-act="quiz" id="btn-quiz">🎯 Quiz</button>
+        </div>
+      </section>
+
+      <aside class="panel right" id="panel-right">
+        <div class="tabs">
+          <button class="tab on" data-tab="info">Estructura</button>
+          <button class="tab" data-tab="phys">Fisiología</button>
+        </div>
+        <div class="panel-body" id="tab-info"></div>
+        <div class="panel-body hidden" id="tab-phys"></div>
+        <footer class="credits">
+          Modelos: <a href="https://www.z-anatomy.com" target="_blank" rel="noopener">Z-Anatomy</a> (BodyParts3D, © DBCLS; <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>) y
+          <a href="https://humanatlas.io/3d-reference-library" target="_blank" rel="noopener">Human Reference Atlas</a> (NIH HuBMAP, Allen Institute; <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>). Uso educativo.
+        </footer>
+      </aside>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

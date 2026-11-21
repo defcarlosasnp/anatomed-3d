@@ -1,0 +1,11 @@
+{
+  "verbose": true,
+  "parts": [
+    {"key": "trachea", "src": "VH_M_trachea"},
+    {"key": "trach_cart", "src": "VH_M_tracheal_cartilage"},
+    {"key": "carina", "src": "VH_M_carina"},
+    {"key": "mb_r", "src": "VH_M_right_main_bronchus"},
+    {"key": "mb_l", "src": "VH_M_left_main_bronchus"},
+    {"key": "cart_main", "src": ["VH_M_cartilage_of_the_main_bronchus_L", "VH_M_cartilage_of_the_main_bronchus_R"]}
+  ]
+}

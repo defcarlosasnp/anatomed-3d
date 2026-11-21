@@ -1,0 +1,19 @@
+{
+  "verbose": true,
+  "parts": [
+    {"key": "s1", "src": "Posterior segment of liver (I)"},
+    {"key": "s2", "src": "Left posterior lateral segment of liver (II)"},
+    {"key": "s3", "src": "Left anterior lateral segment of liver (III)"},
+    {"key": "s4", "src": "Left medial segment of liver (IV)"},
+    {"key": "s5", "src": "Anterior medial segment of liver (V)"},
+    {"key": "s6", "src": "Anterior lateral segment of liver (VI)"},
+    {"key": "s7", "src": "Posterior lateral segment of liver (VII)"},
+    {"key": "s8", "src": "Posterior medial segment of liver (VIII)"},
+    {"key": "gallbladder", "src": "Gallbladder"},
+    {"key": "bile_duct", "src": "Bile duct"},
+    {"key": "pancreas", "src": "Pancreas"},
+    {"key": "panc_duct", "src": "Pancreatic duct"},
+    {"key": "duodenum", "src": "Duodenum"},
+    {"key": "stomach", "src": "Stomach"}
+  ]
+}

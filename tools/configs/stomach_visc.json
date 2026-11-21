@@ -1,0 +1,11 @@
+{
+  "landmarkScopes": ["Digestive system.g/Stomach/", "Digestive system.g/Liver/Stomach/", "/Stomach/"],
+  "parts": [
+    {"key": "oesophagus", "src": "Oesophagus"},
+    {"key": "stomach", "src": "Stomach"},
+    {"key": "duodenum", "src": "Duodenum"},
+    {"key": "liver", "src": "Liver"},
+    {"key": "pancreas", "src": "Pancreas"},
+    {"key": "gallbladder", "src": "Gallbladder"}
+  ]
+}

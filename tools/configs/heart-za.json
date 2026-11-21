@@ -1,0 +1,33 @@
+{
+  "parts": [
+    {"key": "ao_l", "src": "Left coronary leaflet"},
+    {"key": "ao_n", "src": "Non-coronary leaflet"},
+    {"key": "ao_r", "src": "Right coronary leaflet"},
+    {"key": "pv_a", "src": "Anterior semilunar leaflet of pulmonary valve"},
+    {"key": "pv_l", "src": "Left semilunar leaflet of pulmonary valve"},
+    {"key": "pv_r", "src": "Right semilunar leaflet of pulmonary valve"},
+    {"key": "rca", "src": "Right coronary artery"},
+    {"key": "rca_il", "src": "Right inferolateral branch of right coronary artery"},
+    {"key": "lca", "src": "Left coronary artery"},
+    {"key": "cx", "src": "Circumflex artery of heart"},
+    {"key": "lad", "src": "Anterior interventricular artery"},
+    {"key": "lad_sep", "src": "Septal branches of anterior interventricular artery"},
+    {"key": "cs", "src": "Coronary sinus"},
+    {"key": "gcv", "src": "Great cardiac vein"},
+    {"key": "mcv", "src": "Middle cardiac vein"},
+    {"key": "ilv", "src": "Inferior vein of left ventricle"},
+    {"key": "asc_ao", "src": "Ascending aorta"},
+    {"key": "arch_ao", "src": "Aortic arch"},
+    {"key": "bct", "src": "Brachiocephalic trunk"},
+    {"key": "pt", "src": "Pulmonary trunk"},
+    {"key": "pt_bif", "src": "Bifurcation of pulmonary trunk"},
+    {"key": "lpa", "src": "Left pulmonary artery"},
+    {"key": "rpa", "src": "Right pulmonary artery"},
+    {"key": "svc", "src": "Superior vena cava"},
+    {"key": "ivc", "src": "Inferior vena cava (thoracic part)"},
+    {"key": "rspv", "src": "Right superior pulmonary vein"},
+    {"key": "ripv", "src": "Right inferior pulmonary vein"},
+    {"key": "lspv", "src": "Left superior pulmonary vein"},
+    {"key": "lipv", "src": "Left inferior pulmonary vein"}
+  ]
+}

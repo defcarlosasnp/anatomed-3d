@@ -1,0 +1,11 @@
+{
+  "verbose": true,
+  "parts": [
+    {"key": "capsule", "src": "VH_M_kidney_capsule_L"},
+    {"key": "cortex", "src": "VH_M_outer_cortex_of_kidney_L"},
+    {"key": "columns", "src": "VH_M_renal_column_L"},
+    {"key": "pyramids", "src": ["VH_M_renal_pyramid_L_a", "VH_M_renal_pyramid_L_b", "VH_M_renal_pyramid_L_c", "VH_M_renal_pyramid_L_d", "VH_M_renal_pyramid_L_e", "VH_M_renal_pyramid_L_f", "VH_M_renal_pyramid_L_g", "VH_M_renal_pyramid_L_h", "VH_M_renal_pyramid_L_i"]},
+    {"key": "papillae", "src": ["VH_M_renal_papilla_L_a", "VH_M_renal_papilla_L_b", "VH_M_renal_papilla_L_c", "VH_M_renal_papilla_L_d", "VH_M_renal_papilla_L_e", "VH_M_renal_papilla_L_f", "VH_M_renal_papilla_L_g", "VH_M_renal_papilla_L_h", "VH_M_renal_papilla_L_i"]},
+    {"key": "hilum", "src": "VH_M_hilum_of_kidney_L"}
+  ]
+}

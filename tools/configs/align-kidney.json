@@ -1,0 +1,6 @@
+{
+  "source": { "file": "../../sources/za/VisceralSystem100.glb", "nodes": ["Kidney.l"] },
+  "target": { "file": "../../sources/hra/VH_M_Kidney_L.glb", "nodes": ["VH_M_kidney_capsule_L"] },
+  "iterations": 60,
+  "trim": 0.85
+}
