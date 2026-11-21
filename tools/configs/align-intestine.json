@@ -1,0 +1,11 @@
+{
+  "source": { "file": "../za/VisceralSystem100.glb", "nodes": ["Ascending colon", "Transverse colon", "Descending colon", "Sigmoid colon"] },
+  "target": { "file": "../hra/SBU_M_Intestine_Large.glb", "nodes": ["VH_M_ascending_colon", "VH_M_transverse_colon", "VH_M_descending_colon", "VH_M_sigmoid_colon", "VH_M_hepatic_flexure_of_colon", "VH_M_splenic_flexure_of_colon"] },
+  "pairs": [
+    [["Ascending colon"], ["VH_M_ascending_colon"]],
+    [["Transverse colon"], ["VH_M_transverse_colon"]],
+    [["Descending colon"], ["VH_M_descending_colon"]],
+    [["Sigmoid colon"], ["VH_M_sigmoid_colon"]]
+  ],
+  "iterations": 50, "trim": 0.7
+}

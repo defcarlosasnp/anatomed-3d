@@ -1,0 +1,12 @@
+{ "transform": "T-intestine.json", "verbose": true, "parts": [
+  {"key": "abd_ao", "src": "Abdominal aorta"}, {"key": "sma", "src": "Superior mesenteric artery"},
+  {"key": "ileocolic", "src": "Ileocolic artery"}, {"key": "ileocolic_colic", "src": "Colic branch of ileocolic artery"},
+  {"key": "ileal_br", "src": "Ileal branch of ileocolic artery"}, {"key": "appendicular", "src": "Appendicular artery"},
+  {"key": "marginal", "src": "Marginal artery"}, {"key": "right_colic", "src": "Right colic artery"},
+  {"key": "middle_colic", "src": "Middle colic artery"}, {"key": "ipd", "src": "Inferior pancreaticoduodenal artery"},
+  {"key": "ima", "src": "Inferior mesenteric artery"}, {"key": "left_colic", "src": "Left colic artery"},
+  {"key": "left_colic_d", "src": "Descending branch of left colic artery"}, {"key": "left_colic_a", "src": "Ascending branch of left colic artery"},
+  {"key": "sigmoid_a", "src": "Sigmoid arteries"}, {"key": "sup_rectal", "src": "Superior anorectal artery"},
+  {"key": "smv", "src": "Superior mesenteric vein"}, {"key": "imv", "src": "Inferior mesenteric vein"},
+  {"key": "sigmoid_v", "src": "Sigmoid veins"}, {"key": "middle_colic_v", "src": "Middle colic vein"},
+  {"key": "right_colic_v", "src": "Right colic vein"} ] }

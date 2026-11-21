@@ -7,8 +7,9 @@ import { createStomachEffects } from './effects/stomach.js';
 import { createChordae } from './effects/heartExtras.js';
 import { createBreathing } from './effects/breathing.js';
 import { createNephronFlow } from './effects/nephronFlow.js';
+import { createEye, GAZES } from './effects/eye.js';
 import { createQuiz, MODES } from './features/quiz.js';
-import { Progress, Notes } from './features/store.js';
+import { Progress, Notes, load as loadPref, save as savePref } from './features/store.js';
 import { resolvePoint, resolveCut } from './features/geometry.js';
 
 const $ = (s) => document.querySelector(s);
@@ -88,6 +89,9 @@ async function loadOrgan(id) {
       chip: 'Ondas peristálticas antrales · real ≈ 3/min (acelerado ×5)',
       ctrl: { start: () => st.startPeristalsis(), stop: () => st.stopPeristalsis(), get running() { return st.peristalsis; } },
     };
+  } else if (organ.animation === 'accommodation') {
+    fx.eye = createEye(viewer, monitor);
+    fx.anim = { label: 'Acomodación', panel: { label: 'Ciclos', unit: '/min', min: 4, max: 30, value: 10 }, ctrl: fx.eye };
   } else if (organ.animation === 'flow') {
     fx.nephron = createNephronFlow(viewer);
     fx.anim = { label: 'Flujo', chip: 'Color = osmolaridad del líquido tubular: azul ~100 · crema 300 · naranja ~1200 mOsm/kg', ctrl: fx.nephron };
@@ -600,6 +604,10 @@ $('#toolbar').addEventListener('click', (e) => {
     b.classList.toggle('on', on);
     if (organ.extra.id === 'regions') fx.stomach?.setShow(on);
     if (organ.extra.id === 'adh') fx.nephron?.setAdh(on);
+    if (organ.extra.id === 'gaze') {
+      b.classList.toggle('on', true);
+      openGazeMenu(b);
+    }
     if (organ.extra.id === 'conduction') {
       fx.heart?.setConduction(on);
       if (on && !fx.heart.running) toggleAnim($('#btn-anim'));
@@ -616,6 +624,7 @@ $('#toolbar').addEventListener('click', (e) => {
   if (act !== 'tour') $('#tour-pop').classList.add('hidden');
   if (act === 'quiz') openQuizMenu();
   if (act !== 'quiz') $('#quiz-pop').classList.add('hidden');
+  if (act !== 'extra') $('#gaze-pop').classList.add('hidden');
 });
 
 function toggleAnim(b) {
@@ -676,6 +685,10 @@ function setClipEnabled(on) {
   $('#btn-clip').classList.toggle('on', on);
   viewer.setClip({ enabled: on });
   for (const [k, p] of viewer.parts) if (p.info.showOnClip) viewer.setVisible(k, on);
+  if (!on) {
+    viewer.resetView();
+    $('#clip-presets').querySelectorAll('button').forEach((x) => x.classList.remove('on'));
+  }
   syncTree();
 }
 
@@ -704,6 +717,38 @@ document.addEventListener('pointerdown', (e) => {
     document.querySelectorAll('.tool-pop').forEach((p) => p.classList.add('hidden'));
   }
 });
+
+// ====================================================== movimientos oculares
+function openGazeMenu(btn) {
+  const pop = $('#gaze-pop');
+  pop.innerHTML = `<div class="small muted pop-title">Posiciones diagnósticas de la mirada (ojo izquierdo)</div>${GAZES.map((g) => `<button data-g="${g.id}"><b>${esc(g.label)}</b></button>`).join('')}`;
+  pop.querySelectorAll('button').forEach((b) => {
+    b.onclick = () => {
+      const g = fx.eye?.gaze(b.dataset.g);
+      if (!g) return;
+      pop.classList.add('hidden');
+      $('#hud-top').querySelector('.gaze')?.remove();
+      $('#btn-extra').classList.toggle('on', g.id !== 'primary');
+      if (g.id !== 'primary') $('#hud-top').insertAdjacentHTML('beforeend', `<span class="chip gaze">👀 ${esc(g.label)}: ${esc(g.text)}</span>`);
+    };
+  });
+  togglePop(btn, pop);
+}
+
+// ================================================================= calidad visual
+const isMobile = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 860;
+let quality = loadPref('anatomed.quality', isMobile ? 'low' : 'high');
+function applyQuality() {
+  viewer.visuals.setQuality(quality);
+  $('#btn-quality').textContent = quality === 'high' ? '✨ Visual: alta' : '◻ Visual: básica';
+  $('#btn-quality').title = quality === 'high' ? 'Oclusión ambiental, sombras y contorno de selección (requiere más GPU)' : 'Render simple (más rápido)';
+}
+$('#btn-quality').onclick = () => {
+  quality = quality === 'high' ? 'low' : 'high';
+  savePref('anatomed.quality', quality);
+  applyQuality();
+};
+applyQuality();
 
 // ============================================================== recorrido
 const tour = { steps: [], i: 0 };

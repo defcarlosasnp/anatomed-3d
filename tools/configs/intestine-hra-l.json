@@ -1,0 +1,6 @@
+{ "verbose": true, "parts": [
+  {"key": "caecum", "src": "VH_M_caecum"}, {"key": "appendix", "src": "VH_M_vermiform_appendix"},
+  {"key": "icv", "src": "VH_M_ileocecal_valve"}, {"key": "asc", "src": "VH_M_ascending_colon"},
+  {"key": "hflex", "src": "VH_M_hepatic_flexure_of_colon"}, {"key": "trans", "src": "VH_M_transverse_colon"},
+  {"key": "sflex", "src": "VH_M_splenic_flexure_of_colon"}, {"key": "desc", "src": "VH_M_descending_colon"},
+  {"key": "sigmoid", "src": "VH_M_sigmoid_colon"}, {"key": "rectum", "src": "VH_M_rectum"} ] }

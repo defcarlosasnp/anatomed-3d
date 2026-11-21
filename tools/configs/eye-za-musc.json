@@ -1,0 +1,5 @@
+{ "transform": "T-eye.json", "parts": [
+  {"key": "m_sr", "src": "Superior rectus muscle.l"}, {"key": "m_ir", "src": "Inferior rectus muscle.l"},
+  {"key": "m_mr", "src": "Medial rectus muscle.l"}, {"key": "m_lr", "src": "Lateral rectus muscle.l"},
+  {"key": "m_so", "src": "Superior oblique muscle.l"}, {"key": "trochlea", "src": "Trochlea of superior oblique muscle.l"},
+  {"key": "m_io", "src": "Inferior oblique muscle.l"}, {"key": "m_lps", "src": "Levator palpebrae superioris.l"} ] }

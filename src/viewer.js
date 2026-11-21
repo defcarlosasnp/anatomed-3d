@@ -5,6 +5,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { ClipSystem } from './clipping.js';
+import { Visuals } from './visuals.js';
 
 const HOVER_EMISSIVE = new THREE.Color('#4a4a4a');
 const SELECT_EMISSIVE = new THREE.Color('#14a896');
@@ -41,9 +42,12 @@ export class Viewer {
     this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     this.scene.environmentIntensity = 0.45;
     this.scene.add(new THREE.HemisphereLight('#ffffff', '#3a2a2a', 0.5));
-    const key = new THREE.DirectionalLight('#ffffff', 1.6);
+    const key = (this.keyLight = new THREE.DirectionalLight('#ffffff', 1.6));
     key.position.set(2, 3, 4);
-    this.scene.add(key);
+    this.scene.add(key, key.target);
+    const rim = new THREE.DirectionalLight('#9fd8ff', 0.55); // luz de contorno para dar volumen
+    rim.position.set(-3, 1.5, -3);
+    this.scene.add(rim);
 
     this.camera = new THREE.PerspectiveCamera(38, 1, 0.01, 100);
     this.controls = new OrbitControls(this.camera, r.domElement);
@@ -60,6 +64,7 @@ export class Viewer {
     this.scene.add(this.root);
 
     this.clipSys = new ClipSystem(this);
+    this.visuals = new Visuals(this);
 
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
@@ -103,6 +108,7 @@ export class Viewer {
     for (const p of this.parts.values()) this._measure(p);
     for (const p of this.parts.values()) this.applyState(p);
     this._updateClipPlane();
+    this.visuals.layout();
     this.resetView(false);
   }
 
@@ -112,13 +118,19 @@ export class Viewer {
     if (!info) return null;
     this.space.add(node);
     const color = new THREE.Color(info.color || this.organ.groups.find((g) => g.id === info.group)?.color || '#cccccc');
+    // vasos: superficie húmeda y brillante · tejidos: brillo suave con "sheen" aterciopelado
+    const vessel = info.vessel ?? /arter|ven|vas|coron|portal/.test(info.group || '');
     const material = new THREE.MeshPhysicalMaterial({
       color,
-      roughness: info.roughness ?? 0.5,
+      roughness: info.roughness ?? (vessel ? 0.32 : 0.55),
       metalness: 0,
-      clearcoat: 0.25,
-      clearcoatRoughness: 0.45,
+      clearcoat: vessel ? 0.6 : 0.2,
+      clearcoatRoughness: vessel ? 0.25 : 0.5,
+      sheen: vessel ? 0 : 0.45,
+      sheenRoughness: 0.7,
+      sheenColor: color.clone().lerp(new THREE.Color('#ffffff'), 0.45),
       side: THREE.DoubleSide,
+      clipShadows: true,
     });
     const meshes = [];
     node.traverse((o) => {
@@ -171,6 +183,7 @@ export class Viewer {
   clear() {
     this.emit('clear');
     this.clipSys.clearCaps();
+    this.visuals?.setSelection(null);
     this.tickers.clear();
     for (const c of [...this.space.children]) {
       this.space.remove(c);
@@ -243,6 +256,7 @@ export class Viewer {
   setSelected(key) {
     const prev = this.selectedKey;
     this.selectedKey = key;
+    this.visuals.setSelection(key && this.parts.has(key) ? this.parts.get(key).meshes : null);
     for (const k of [prev, key]) if (k && this.parts.has(k)) this.applyState(this.parts.get(k));
   }
 
@@ -496,6 +510,7 @@ export class Viewer {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
     this.labelRenderer.setSize(w, h);
+    this.visuals?.setSize(w, h);
   }
 
   _frame() {
@@ -506,7 +521,7 @@ export class Viewer {
     this._processHover?.();
     for (const fn of this.tickers) fn(dt, t);
     this.controls.update();
-    this.renderer.render(this.scene, this.camera);
+    this.visuals.render();
     this.labelRenderer.render(this.scene, this.camera);
   }
 }

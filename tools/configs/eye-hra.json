@@ -1,0 +1,15 @@
+{ "verbose": false, "simplify": { "ratio": 0.3, "error": 0.0003 },
+  "parts": [
+    {"key": "cornea", "src": "VH_M_cornea_L"}, {"key": "sclera", "src": "VH_M_sclera_L"},
+    {"key": "csj", "src": "VH_M_corneo_scleral_junction_L"}, {"key": "conj_bulbar", "src": "VH_M_bulbar_conjunctiva_L"},
+    {"key": "conj_palp", "src": ["VH_M_palpebral_conjunctiva_of_upper_eyelid_L", "VH_M_palpebral_conjunctiva_of_lower_eyelid_L"]},
+    {"key": "iris", "src": "VH_M_iris_L"}, {"key": "pupil", "src": "VH_M_pupil_L"},
+    {"key": "ciliary_body", "src": "VH_M_ciliary_body_L"}, {"key": "ciliary_muscle", "src": "VH_M_ciliary_muscle_L"},
+    {"key": "ciliary_proc", "src": "VH_M_ciliary_processes_L"}, {"key": "zonule", "src": "VH_M_suspensory_ligament_of_lens_L"},
+    {"key": "lens", "src": "VH_M_lens_L"}, {"key": "aqueous", "src": "VH_M_aqueous_humor_L"},
+    {"key": "trabecular", "src": "VH_M_trabecular_meshwork_L"}, {"key": "schlemm", "src": "VH_M_schlemms_canal_L"},
+    {"key": "vitreous", "src": "VH_M_vitreous_humor_L"}, {"key": "retina", "src": "VH_M_retina_L"},
+    {"key": "macula", "src": "VH_M_macula_lutea_L"}, {"key": "fovea", "src": "VH_M_fovea_L"},
+    {"key": "optic_disc", "src": "VH_M_optic_disc_L"}, {"key": "ora", "src": "VH_M_ora_serrata_of_retina_L"},
+    {"key": "choroid", "src": "VH_M_optic_choroid_L"}
+  ] }

@@ -26,8 +26,10 @@ npm run build
 | **Estómago** (19) | Z-Anatomy | 5 regiones seleccionables, capas de la pared (aparecen con el corte), peristaltismo |
 | **Hígado** (26) | Z-Anatomy | 8 segmentos de Couinaud, sistema porta, venas hepáticas, vía biliar |
 | **Riñón** (16) | HRA (corteza, columnas, pirámides, papilas) + Z-Anatomy (pelvis, uréter, vasos intrarrenales, suprarrenal), alineados por ICP | Corte coronal con la arquitectura interna |
+| **Intestino** (41) | HRA (duodeno por porciones, yeyuno, íleon, ciego, apéndice, colon por segmentos, recto) + Z-Anatomy (arterias y venas mesentéricas, alineadas por ICP) | Tránsito intestinal, irrigación y zonas limítrofes (Griffiths, Sudeck) |
 | **Nefrona** (13) | Generada por código | Flujo tubular coloreado por osmolaridad, gradiente medular, botón ADH |
 | **Encéfalo** (142) | Allen Human Brain (vía HRA) | Giros, ganglios basales, núcleos talámicos, sistema límbico, ventrículos; 5 recorridos |
+| **Ojo** (31) | HRA (globo con 21 estructuras: canal de Schlemm, malla trabecular, humores, mácula, fóvea…) + Z-Anatomy (músculos extraoculares y nervio óptico) | Acomodación animada, movimientos oculares (prueba en H), recorrido del humor acuoso y glaucoma |
 
 ## Herramientas
 
@@ -44,6 +46,7 @@ npm run build
 | 🏷 Etiquetas | Nombres sobre el modelo |
 | ▶ Animación | Latido, respiración, peristaltismo o flujo tubular, según el órgano |
 | 🧭 Recorrido | Guías paso a paso (con menú si hay varias) |
+| ✨ Visual | Calidad alta (oclusión ambiental, sombra de contacto, contorno de selección) o básica para equipos modestos |
 | 🎯 Quiz | 4 modos: clic en la estructura, escribir el nombre, preguntas clínicas de alternativas y repaso de errores (repite más lo que fallas) |
 
 ## Estructura del proyecto
@@ -52,6 +55,7 @@ npm run build
 public/models/          GLB extraídos y comprimidos (meshopt)
 src/viewer.js           motor 3D (Three.js): carga, picking, corte, cámara, etiquetas, partes generadas
 src/clipping.js         cortes: plano/lámina, inclinación y relleno (stencil)
+src/visuals.js          calidad visual: GTAO, contorno de selección, sombras
 src/effects/            latido + conducción, cuerdas tendinosas, respiración, estómago, nefrona
 src/features/           quiz, progreso y notas (localStorage), ubicación de puntos y cortes
 src/organs/*.js         contenido de cada órgano (textos, grupos, colores, recorridos, fisiología)

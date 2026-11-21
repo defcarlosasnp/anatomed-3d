@@ -1,0 +1,13 @@
+import { NodeIO, getBounds } from '@gltf-transform/core';
+import fs from 'node:fs';
+const io = new NodeIO();
+const box = async (f, n) => { const d = await io.read(f); const node = d.getRoot().listNodes().find((x) => x.getName() === n); return getBounds(node); };
+const z = await box('../za/NervousSystem100.glb', 'Sclera.l');
+const h = await box('../hra/3d-vh-m-eye-l.glb', 'VH_M_sclera_L');
+const c = (b) => [0, 1, 2].map((i) => (b.min[i] + b.max[i]) / 2);
+const size = (b) => Math.max(...[0, 1, 2].map((i) => b.max[i] - b.min[i]));
+const s = size(h) / size(z);
+const zc = c(z), hc = c(h);
+const t = [0, 1, 2].map((i) => hc[i] - s * zc[i]);
+fs.writeFileSync('T-eye.json', JSON.stringify([s,0,0,0, 0,s,0,0, 0,0,s,0, t[0],t[1],t[2],1]));
+console.log('scale', s.toFixed(3), 't', t.map((x) => x.toFixed(3)).join(','));

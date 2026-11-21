@@ -9,7 +9,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { NodeIO, getBounds } from '@gltf-transform/core';
-import { flatten, prune, dedup } from '@gltf-transform/functions';
+import { flatten, prune, dedup, weld, simplify } from '@gltf-transform/functions';
+import { MeshoptSimplifier } from 'meshoptimizer';
 
 const [inFile, outFile, lmFile, cfgFile] = process.argv.slice(2);
 const cfg = JSON.parse(fs.readFileSync(cfgFile, 'utf8'));
@@ -94,6 +95,14 @@ for (const n of kept) {
 }
 for (const m of root.listMaterials()) m.dispose();
 await doc.transform(prune(), dedup());
+if (cfg.simplify) {
+  await MeshoptSimplifier.ready;
+  // solo posiciones: atributos extra y normales planas impiden fusionar vértices
+  for (const m of root.listMeshes())
+    for (const prim of m.listPrimitives())
+      for (const sem of prim.listSemantics()) if (sem !== 'POSITION') prim.setAttribute(sem, null);
+  await doc.transform(weld({ tolerance: 0.00002 }), simplify({ simplifier: MeshoptSimplifier, ratio: cfg.simplify.ratio ?? 0.4, error: cfg.simplify.error ?? 0.0004 }), prune());
+}
 
 const b = getBounds(scene);
 console.log('parts', kept.length, 'bounds', b.min.map((v) => v.toFixed(3)).join(','), '→', b.max.map((v) => v.toFixed(3)).join(','));

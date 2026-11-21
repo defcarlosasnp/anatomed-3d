@@ -1,0 +1,6 @@
+{ "verbose": true, "parts": [
+  {"key": "d1", "src": "VH_M_duodenum_superior"}, {"key": "bulb", "src": "VH_M_duodenal_ampulla"},
+  {"key": "d2", "src": "VH_M_duodenum_descending"}, {"key": "d3", "src": "VH_M_duodenum_horizonal"},
+  {"key": "d4", "src": "VH_M_duodenum_ascending"}, {"key": "papilla_major", "src": "VH_M_sphincter_of_hepatopancreatic_ampulla"},
+  {"key": "papilla_minor", "src": "VH_M_papilla_of_santorini"}, {"key": "jejunum", "src": "VH_M_jejunum"},
+  {"key": "ileum", "src": "VH_M_ileum"}, {"key": "ileum_term", "src": "VH_M_ileum_terminal"} ] }
