@@ -4,6 +4,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { ClipSystem } from './clipping.js';
 
 const HOVER_EMISSIVE = new THREE.Color('#4a4a4a');
 const SELECT_EMISSIVE = new THREE.Color('#14a896');
@@ -19,13 +20,11 @@ export class Viewer {
     this.hoverKey = null;
     this.selectedKey = null;
     this.ghostSet = null;
-    this.clip = { enabled: false, axis: 'x', t: 0.5, flip: false };
-    this.plane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0);
     this.loader = new GLTFLoader();
     this.loader.setMeshoptDecoder(MeshoptDecoder);
 
     // renderer
-    const r = (this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }));
+    const r = (this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, stencil: true }));
     r.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     r.localClippingEnabled = true;
     r.toneMapping = THREE.ACESFilmicToneMapping;
@@ -60,18 +59,7 @@ export class Viewer {
     this.root.add(this.space);
     this.scene.add(this.root);
 
-    // plano de corte visible
-    this.planeMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(1, 1),
-      new THREE.MeshBasicMaterial({ color: '#7cd6cc', transparent: true, opacity: 0.07, side: THREE.DoubleSide, depthWrite: false }),
-    );
-    this.planeEdges = new THREE.LineSegments(
-      new THREE.EdgesGeometry(new THREE.PlaneGeometry(1, 1)),
-      new THREE.LineBasicMaterial({ color: '#7cd6cc', transparent: true, opacity: 0.6 }),
-    );
-    this.planeMesh.add(this.planeEdges);
-    this.planeMesh.visible = false;
-    this.scene.add(this.planeMesh);
+    this.clipSys = new ClipSystem(this);
 
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
@@ -182,6 +170,7 @@ export class Viewer {
 
   clear() {
     this.emit('clear');
+    this.clipSys.clearCaps();
     this.tickers.clear();
     for (const c of [...this.space.children]) {
       this.space.remove(c);
@@ -222,7 +211,8 @@ export class Viewer {
     else if (p.tint) m.emissive.copy(p.tint);
     else m.emissive.setRGB(0, 0, 0);
 
-    m.clippingPlanes = this.clip.enabled ? [this.plane] : null;
+    m.clippingPlanes = this.clipSys.state.enabled ? this.clipSys.active : null;
+    this.clipSys.markDirty();
   }
 
   refresh() {
@@ -270,41 +260,46 @@ export class Viewer {
   }
 
   // --------------------------------------------------------------- corte
+  get clip() {
+    return this.clipSys.state;
+  }
+
   setClip(opts) {
-    Object.assign(this.clip, opts);
-    this._updateClipPlane();
+    this.clipSys.set(opts);
     this.refresh();
   }
 
   _updateClipPlane() {
-    // rango del corte: zona de encuadre del órgano (organ.frame) o el modelo completo
+    this.clipSys.update();
+  }
+
+  /** Caja (mundo) del encuadre del órgano: organ.frame o el modelo completo. */
+  frameBox() {
     const box = new THREE.Box3();
     for (const k of this.organ?.frame || []) if (this.parts.has(k)) box.expandByObject(this.parts.get(k).obj);
     if (box.isEmpty()) for (const p of this.parts.values()) box.expandByObject(p.obj);
-    if (box.isEmpty()) return;
-    const i = { x: 0, y: 1, z: 2 }[this.clip.axis];
-    const n = new THREE.Vector3();
-    n.setComponent(i, this.clip.flip ? 1 : -1);
-    const point = box.getCenter(new THREE.Vector3());
-    const min = box.min.getComponent(i);
-    const max = box.max.getComponent(i);
-    point.setComponent(i, min + (max - min) * this.clip.t);
-    this.plane.setFromNormalAndCoplanarPoint(n, point);
+    return box;
+  }
 
-    // plano visible
-    const size = box.getSize(new THREE.Vector3()).multiplyScalar(1.15);
-    this.planeMesh.visible = this.clip.enabled;
-    this.planeMesh.position.copy(point);
-    this.planeMesh.rotation.set(0, 0, 0);
-    if (i === 0) {
-      this.planeMesh.rotation.y = Math.PI / 2;
-      this.planeMesh.scale.set(size.z, size.y, 1);
-    } else if (i === 1) {
-      this.planeMesh.rotation.x = Math.PI / 2;
-      this.planeMesh.scale.set(size.x, size.z, 1);
-    } else {
-      this.planeMesh.scale.set(size.x, size.y, 1);
-    }
+  /**
+   * Corte predefinido. normal/point en coordenadas del modelo. Se conserva el lado n·x ≤ d
+   * y la cámara se ubica en el lado retirado, mirando la superficie de corte.
+   */
+  setClipPreset(normalSpace, pointSpace) {
+    this.root.updateMatrixWorld(true);
+    const n = normalSpace.clone().normalize(); // sin rotación entre modelo y mundo
+    const p = this.space.localToWorld(pointSpace.clone());
+    this.clipSys.state.enabled = true;
+    this.clipSys.setPreset(n, p);
+    this.refresh();
+    const box = this.frameBox();
+    const sphere = box.getBoundingSphere(new THREE.Sphere());
+    const target = this.clipSys.active[0].projectPoint(sphere.center, new THREE.Vector3());
+    if (this.clipSys.state.mode === 'slab') target.copy(sphere.center).addScaledVector(n, n.dot(p) - n.dot(sphere.center));
+    const dist = (sphere.radius / Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2))) * 0.8;
+    const dir = n.clone();
+    if (Math.abs(dir.y) > 0.9) dir.add(new THREE.Vector3(0, 0, 0.35)).normalize();
+    this._animateCamera(target, target.clone().addScaledVector(dir, dist), true);
   }
 
   // --------------------------------------------------------------- cámara
@@ -375,6 +370,33 @@ export class Viewer {
     return obj;
   }
 
+  /** Pin HTML (punto clínico o nota) en coordenadas del modelo. */
+  addPin(posSpace, html, cls, onClick, title) {
+    const el = document.createElement('div');
+    el.className = `pin ${cls || ''}`;
+    el.innerHTML = html;
+    if (title) el.title = title;
+    if (onClick) {
+      el.addEventListener('pointerdown', (e) => e.stopPropagation());
+      el.addEventListener('click', (e) => (e.stopPropagation(), onClick()));
+    }
+    const obj = new CSS2DObject(el);
+    obj.position.copy(posSpace);
+    obj.userData.isPin = cls;
+    this.space.add(obj);
+    return obj;
+  }
+
+  setPinsVisible(cls, v) {
+    this.space.traverse((o) => {
+      if (o.userData.isPin === cls) o.visible = v;
+    });
+  }
+
+  removePins(cls) {
+    for (const o of [...this.space.children]) if (o.userData.isPin === cls) this.space.remove(o);
+  }
+
   setLabelsVisible(v) {
     this.space.traverse((o) => {
       if (o.userData.isLabel) o.visible = v;
@@ -430,7 +452,7 @@ export class Viewer {
       if (!h.object.visible) continue;
       const p = this.parts.get(h.object.userData.partKey);
       if (!p || p.material.opacity < 0.3) continue;
-      if (this.clip.enabled && this.plane.distanceToPoint(h.point) < 0) continue;
+      if (this.clipSys.isClipped(h.point)) continue;
       return { key: p.key, hit: h };
     }
     return null;
@@ -480,6 +502,7 @@ export class Viewer {
     const dt = Math.min(this.clock.getDelta(), 0.1);
     const t = this.clock.elapsedTime;
     if (this._camAnim) this._camAnim();
+    if (this.clipSys.dirty) this.clipSys.rebuildCaps();
     this._processHover?.();
     for (const fn of this.tickers) fn(dt, t);
     this.controls.update();

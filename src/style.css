@@ -369,3 +369,51 @@ button.primary { background: var(--accent); border-color: var(--accent); color: 
 /* etiquetas de zonas (nefrona) */
 .lm-label.zone { background: transparent; border: 0; color: #9fb0c2; font-weight: 600; letter-spacing: 0.6px; font-size: 10px; pointer-events: none; }
 .valves b { color: var(--text); font-weight: 600; }
+
+/* progreso */
+.progress { margin: 0 0 10px; font-size: 11px; color: var(--muted); }
+.progress .bar { height: 5px; border-radius: 3px; background: var(--panel-2); overflow: hidden; margin-bottom: 4px; }
+.progress .bar i { display: block; height: 100%; background: var(--accent); transition: width 0.3s; }
+.item .seen-mark { color: var(--accent); font-size: 11px; opacity: 0; margin-left: auto; }
+.item.seen .seen-mark { opacity: 0.9; }
+.group.special .group-head { color: #f2d06b; }
+.pin-num { width: 18px; height: 18px; border-radius: 50%; background: #f2c14e; color: #2a2108; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.pin-num.note { background: #7cd6cc; color: #062421; }
+.hint { font-size: 12px; color: var(--muted); padding: 2px 8px 6px 22px; margin: 0; }
+
+/* pines 3D */
+.pin { pointer-events: auto; cursor: pointer; transform: translateY(-50%); }
+.pin span { display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: 11px; font-weight: 700; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.5); transition: transform 0.15s; }
+.pin.poi span { background: #f2c14e; color: #2a2108; }
+.pin.note span { background: #7cd6cc; color: #062421; }
+.pin:hover span, .pin.sel span { transform: scale(1.25); }
+.pin.sel span { border-color: #14a896; }
+canvas.placing { cursor: crosshair !important; }
+
+/* corte */
+.tool-pop { max-height: 72vh; overflow-y: auto; }
+.tilt summary { cursor: pointer; color: var(--muted); }
+.tilt { display: flex; flex-direction: column; gap: 4px; }
+.tilt[open] { padding-bottom: 4px; }
+.presets { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--line); padding-top: 8px; }
+.presets button { background: var(--panel-2); border: 1px solid var(--line); border-radius: 7px; padding: 6px 9px; text-align: left; font-size: 12.5px; color: var(--text); }
+.presets button:hover { border-color: var(--accent); }
+.presets button.on { background: rgba(79,179,169,0.2); border-color: var(--accent); }
+
+/* quiz */
+.tool-pop.menu button small { display: block; color: var(--muted); font-size: 11px; font-weight: 400; }
+.pop-title { padding: 4px 10px 6px; }
+.quiz-write { display: flex; gap: 6px; margin: 6px 0; }
+.quiz-write input { flex: 1; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; color: var(--text); outline: none; min-width: 0; }
+.quiz-write input:focus { border-color: var(--accent); }
+.quiz-write button { border-radius: 8px; padding: 6px 12px; }
+.quiz-q { font-weight: 600; color: var(--text) !important; }
+.quiz-opts { display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; }
+.quiz-opts button { text-align: left; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; font-size: 13px; color: var(--text); }
+.quiz-opts button:hover:not(:disabled) { border-color: var(--accent); }
+.quiz-opts button.right { border-color: var(--ok); background: rgba(92,198,138,0.15); }
+.quiz-opts button.wrong { border-color: var(--danger); background: rgba(226,103,93,0.15); }
+.feedback .explain { display: block; font-weight: 400; color: #c9d1db; margin-top: 4px; font-size: 12.5px; }
+.misses { margin: 4px 0 8px; padding-left: 18px; color: #c9d1db; }
+#quiz-card { max-height: calc(100% - 100px); overflow-y: auto; }
+#note-text { width: 100%; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; color: var(--text); padding: 8px 10px; font: inherit; resize: vertical; margin-top: 8px; }

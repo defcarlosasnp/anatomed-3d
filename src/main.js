@@ -1,4 +1,5 @@
 import './style.css';
+import * as THREE from 'three';
 import { Viewer } from './viewer.js';
 import { organs, comingSoon } from './organs/index.js';
 import { createHeartbeat } from './effects/heartbeat.js';
@@ -6,6 +7,9 @@ import { createStomachEffects } from './effects/stomach.js';
 import { createChordae } from './effects/heartExtras.js';
 import { createBreathing } from './effects/breathing.js';
 import { createNephronFlow } from './effects/nephronFlow.js';
+import { createQuiz, MODES } from './features/quiz.js';
+import { Progress, Notes } from './features/store.js';
+import { resolvePoint, resolveCut } from './features/geometry.js';
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -18,6 +22,9 @@ let fx = {}; // efectos del órgano actual (heartbeat / stomach)
 let selection = null; // { key, region }
 let mode = 'explore'; // explore | tour | quiz
 let labelsOn = false;
+let poisOn = false;
+let noteMode = false;
+let poiPos = {}; // id -> Vector3 (coordenadas del modelo)
 
 // ======================================================== pestañas de órganos
 function buildTabs() {
@@ -86,10 +93,13 @@ async function loadOrgan(id) {
     fx.anim = { label: 'Flujo', chip: 'Color = osmolaridad del líquido tubular: azul ~100 · crema 300 · naranja ~1200 mOsm/kg', ctrl: fx.nephron };
   }
   buildLabels();
+  buildPins();
   buildTree();
   buildPhysiology();
   configureToolbar();
+  buildClipPresets();
   renderInfo();
+  updateProgress();
   $('#loading').classList.add('hidden');
 }
 
@@ -111,10 +121,54 @@ function addPartLabel(key) {
   if (pos) viewer.addLabel(pos, p.info.name, () => select({ key }, true));
 }
 
+// ================================================ puntos clínicos y notas
+function buildPins() {
+  poiPos = {};
+  viewer.removePins('poi');
+  viewer.removePins('note');
+  (organ.pois || []).forEach((poi, i) => {
+    const pos = resolvePoint(viewer, poi.at, true);
+    if (!pos) return;
+    poiPos[poi.id] = pos;
+    viewer.addPin(pos, `<span>${i + 1}</span>`, 'poi', () => select({ poi: poi.id }, true), poi.name);
+  });
+  viewer.setPinsVisible('poi', poisOn);
+  buildNotePins();
+}
+
+function buildNotePins() {
+  viewer.removePins('note');
+  for (const n of Notes.list(organ.id)) {
+    viewer.addPin(new THREE.Vector3(...n.pos), '<span>✎</span>', 'note', () => select({ note: n.id }), n.text || 'Nota');
+  }
+}
+
+function focusPoint(posSpace) {
+  const target = viewer.space.localToWorld(posSpace.clone());
+  const dir = viewer.camera.position.clone().sub(viewer.controls.target).normalize();
+  const dist = THREE.MathUtils.clamp(viewer.camera.position.distanceTo(viewer.controls.target) * 0.75, 1.8, 3.2);
+  viewer._animateCamera(target, target.clone().addScaledVector(dir, dist), true);
+}
+
+// ================================================================ progreso
+function studyItems() {
+  const ids = [...viewer.parts.keys()].filter((k) => viewer.parts.get(k).info.quiz !== false && k !== organ.regions?.part);
+  if (organ.regions) organ.regions.list.forEach((r) => ids.push(`${organ.regions.part}:${r.key}`));
+  (organ.pois || []).forEach((p) => ids.push(`poi:${p.id}`));
+  return ids;
+}
+function updateProgress() {
+  const ids = studyItems();
+  const n = Progress.viewedCount(organ.id, ids);
+  const pct = ids.length ? Math.round((n / ids.length) * 100) : 0;
+  $('#progress').innerHTML = `<div class="bar"><i style="width:${pct}%"></i></div><span>Revisado: ${n}/${ids.length} (${pct} %) · Dominio quiz: ${quiz.mastery()} %</span>`;
+}
+
 // ======================================================= árbol de estructuras
 function buildTree() {
   const tree = $('#tree');
   tree.innerHTML = '';
+  buildSpecialGroups(tree);
   for (const g of organ.groups) {
     const keys = [...viewer.parts.keys()].filter((k) => organ.parts[k].group === g.id);
     if (!keys.length) continue;
@@ -136,7 +190,7 @@ function buildTree() {
       const row = document.createElement('div');
       row.className = 'item';
       row.dataset.key = k;
-      row.innerHTML = `<button class="eye" title="Mostrar/ocultar">👁</button><span class="swatch" style="background:#${p.baseColor.getHexString()}"></span><span class="name">${esc(p.info.name)}</span>`;
+      row.innerHTML = `<button class="eye" title="Mostrar/ocultar">👁</button><span class="swatch" style="background:#${p.baseColor.getHexString()}"></span><span class="name">${esc(p.info.name)}</span><span class="seen-mark" title="Revisada">✓</span>`;
       row.querySelector('.eye').onclick = (e) => {
         e.stopPropagation();
         viewer.setVisible(k, !p.visible);
@@ -144,7 +198,7 @@ function buildTree() {
       };
       row.onclick = () => {
         if (!p.visible) viewer.setVisible(k, true), syncTree();
-        if (mode === 'quiz') return;
+        if (quiz.active) return;
         select({ key: k }, true);
       };
       row.onmouseenter = () => viewer.setHover(k);
@@ -159,8 +213,8 @@ function buildTree() {
           rr.dataset.key = k;
           rr.dataset.region = r.key;
           rr.style.paddingLeft = '48px';
-          rr.innerHTML = `<span class="swatch" style="background:${r.color}"></span><span class="name">${esc(r.name)}</span>`;
-          rr.onclick = () => mode !== 'quiz' && select({ key: k, region: r.key }, true);
+          rr.innerHTML = `<span class="swatch" style="background:${r.color}"></span><span class="name">${esc(r.name)}</span><span class="seen-mark" title="Revisada">✓</span>`;
+          rr.onclick = () => !quiz.active && select({ key: k, region: r.key }, true);
           rr.onmouseenter = () => fx.stomach?.setHover(r.key);
           rr.onmouseleave = () => fx.stomach?.setHover(null);
           items.appendChild(rr);
@@ -180,8 +234,44 @@ function buildTree() {
   filterTree($('#search').value);
 }
 
+function buildSpecialGroups(tree) {
+  const mk = (cls, title, rows, hint) => {
+    const div = document.createElement('div');
+    div.className = `group special ${cls}`;
+    div.innerHTML = `<div class="group-head"><span class="caret">▾</span><span>${title}</span><span class="count">${rows.length}</span></div><div class="items"></div>`;
+    const items = div.querySelector('.items');
+    if (!rows.length && hint) items.innerHTML = `<p class="hint">${hint}</p>`;
+    rows.forEach((r) => items.appendChild(r));
+    div.querySelector('.group-head').onclick = () => div.classList.toggle('collapsed');
+    tree.appendChild(div);
+    return div;
+  };
+  const poiRows = (organ.pois || [])
+    .filter((poi) => poiPos[poi.id])
+    .map((poi, i) => {
+      const row = document.createElement('div');
+      row.className = 'item';
+      row.dataset.poi = poi.id;
+      row.dataset.search = `${poi.name} ${poi.desc || ''}`;
+      row.innerHTML = `<span class="pin-num">${i + 1}</span><span class="name">${esc(poi.name)}</span><span class="seen-mark">✓</span>`;
+      row.onclick = () => select({ poi: poi.id }, true);
+      return row;
+    });
+  if (poiRows.length) mk('pois', '📍 Puntos clínicos', poiRows).classList.add('collapsed');
+  const noteRows = Notes.list(organ.id).map((n) => {
+    const row = document.createElement('div');
+    row.className = 'item';
+    row.dataset.note = n.id;
+    row.dataset.search = n.text;
+    row.innerHTML = `<span class="pin-num note">✎</span><span class="name">${esc(n.text || 'Nota sin texto')}</span>`;
+    row.onclick = () => select({ note: n.id });
+    return row;
+  });
+  mk('notes', '📝 Mis notas', noteRows, 'Usa ✏️ Nota en la barra inferior y haz clic en el modelo para dejar una nota.');
+}
+
 function syncTree() {
-  document.querySelectorAll('#tree .group').forEach((gEl) => {
+  document.querySelectorAll('#tree .group:not(.special)').forEach((gEl) => {
     const rows = [...gEl.querySelectorAll('.item:not(.region)')];
     let any = false;
     rows.forEach((row) => {
@@ -193,8 +283,18 @@ function syncTree() {
     gEl.querySelector('.group-head .eye').classList.toggle('off', !any);
   });
   document.querySelectorAll('#tree .item').forEach((row) => {
-    const sel = selection && row.dataset.key === selection.key && (row.dataset.region || null) === (selection.region || null);
-    row.classList.toggle('sel', !!sel);
+    let sel = false;
+    let id = null;
+    if (row.dataset.poi) {
+      sel = selection?.poi === row.dataset.poi;
+      id = `poi:${row.dataset.poi}`;
+    } else if (row.dataset.note) sel = selection?.note === row.dataset.note;
+    else {
+      sel = !!selection && !selection.poi && !selection.note && row.dataset.key === selection.key && (row.dataset.region || null) === (selection.region || null);
+      id = row.dataset.region ? `${row.dataset.key}:${row.dataset.region}` : row.dataset.key;
+    }
+    row.classList.toggle('sel', sel);
+    if (id) row.classList.toggle('seen', Progress.isViewed(organ.id, id));
   });
 }
 
@@ -203,15 +303,17 @@ function filterTree(q) {
   document.querySelectorAll('#tree .group').forEach((gEl) => {
     let shown = 0;
     gEl.querySelectorAll('.item').forEach((row) => {
-      const info = row.dataset.region
-        ? organ.regions.list.find((r) => r.key === row.dataset.region)
-        : organ.parts[row.dataset.key];
-      const hay = `${info.name} ${info.en}`.toLowerCase();
+      let hay;
+      if (row.dataset.search !== undefined) hay = row.dataset.search.toLowerCase();
+      else {
+        const info = row.dataset.region ? organ.regions.list.find((r) => r.key === row.dataset.region) : organ.parts[row.dataset.key];
+        hay = `${info.name} ${info.en}`.toLowerCase();
+      }
       const ok = !q || hay.includes(q);
       row.style.display = ok ? '' : 'none';
       if (ok) shown++;
     });
-    gEl.style.display = shown ? '' : 'none';
+    gEl.style.display = shown || (gEl.classList.contains('notes') && !q) ? '' : 'none';
     if (q) gEl.classList.remove('collapsed');
   });
 }
@@ -220,9 +322,21 @@ $('#search').addEventListener('input', (e) => filterTree(e.target.value));
 // ============================================================== selección
 function select(sel, focus = false) {
   selection = sel;
-  viewer.setSelected(sel && !sel.region ? sel.key : null);
-  fx.stomach?.setSelected(sel?.region || null);
-  if (sel && focus) viewer.focusOn([sel.key]);
+  const isPart = sel && sel.key;
+  viewer.setSelected(isPart && !sel.region ? sel.key : null);
+  fx.stomach?.setSelected(isPart ? sel.region || null : null);
+  document.querySelectorAll('.pin.sel').forEach((el) => el.classList.remove('sel'));
+  if (sel?.poi) {
+    viewer.space.traverse((o) => o.userData.isPin === 'poi' && o.element.title === organ.pois.find((x) => x.id === sel.poi)?.name && o.element.classList.add('sel'));
+    if (focus && poiPos[sel.poi]) focusPoint(poiPos[sel.poi]);
+  } else if (sel?.note) {
+    const n = Notes.list(organ.id).find((x) => x.id === sel.note);
+    if (n && focus) focusPoint(new THREE.Vector3(...n.pos));
+  } else if (sel && focus) viewer.focusOn([sel.key]);
+  if (sel && !sel.note) {
+    const id = sel.poi ? `poi:${sel.poi}` : sel.region ? `${sel.key}:${sel.region}` : sel.key;
+    if (Progress.markViewed(organ.id, id)) updateProgress();
+  }
   syncTree();
   renderInfo();
   if (sel) {
@@ -233,6 +347,10 @@ function select(sel, focus = false) {
 
 function infoFor(sel) {
   if (!sel) return null;
+  if (sel.poi) {
+    const poi = organ.pois.find((x) => x.id === sel.poi);
+    return poi && { ...poi, en: 'Punto de referencia clínico', groupName: 'Punto clínico', groupColor: '#f2c14e' };
+  }
   if (sel.region) {
     const r = organ.regions.list.find((x) => x.key === sel.region);
     return { ...r, groupName: 'Región del estómago', groupColor: r.color };
@@ -243,8 +361,42 @@ function infoFor(sel) {
   return { ...p, func: p.func || gi.func, clinic: p.clinic || gi.clinic, groupName: g?.name, groupColor: g?.color };
 }
 
+function renderNote(el) {
+  const n = Notes.list(organ.id).find((x) => x.id === selection.note);
+  if (!n) return select(null);
+  const part = organ.parts[n.key];
+  el.innerHTML = `
+    <div class="info">
+      <span class="badge"><span class="swatch" style="background:#f2c14e"></span>Mi nota</span>
+      <h2>Nota${part ? ` · ${esc(part.name)}` : ''}</h2>
+      <div class="en">${new Date(n.created).toLocaleString('es-CL')} · guardada solo en este navegador</div>
+      <textarea id="note-text" rows="6" placeholder="Escribe tu nota (ej. «preguntaron esto en la prueba»)…">${esc(n.text)}</textarea>
+      <div class="info-actions">
+        <button data-a="save" class="primary">💾 Guardar</button>
+        <button data-a="focus">🎯 Ir a la nota</button>
+        <button data-a="del">🗑 Borrar</button>
+      </div>
+    </div>`;
+  const ta = el.querySelector('#note-text');
+  setTimeout(() => !n.text && ta.focus(), 50);
+  el.querySelector('[data-a=save]').onclick = () => {
+    Notes.update(organ.id, n.id, ta.value.trim());
+    buildNotePins();
+    buildTree();
+    select({ note: n.id });
+  };
+  el.querySelector('[data-a=focus]').onclick = () => focusPoint(new THREE.Vector3(...n.pos));
+  el.querySelector('[data-a=del]').onclick = () => {
+    Notes.remove(organ.id, n.id);
+    buildNotePins();
+    buildTree();
+    select(null);
+  };
+}
+
 function renderInfo() {
   const el = $('#tab-info');
+  if (selection?.note) return renderNote(el);
   const info = infoFor(selection);
   if (!info) {
     el.innerHTML = `
@@ -265,14 +417,14 @@ function renderInfo() {
       ${info.clinic ? `<h4>Correlación clínica</h4><p class="clinic">${esc(info.clinic)}</p>` : ''}
       <div class="info-actions">
         <button data-a="focus">🎯 Enfocar</button>
-        ${selection.region ? '' : '<button data-a="isolate">◎ Aislar</button><button data-a="hide">🚫 Ocultar</button>'}
+        ${selection.region || selection.poi ? '' : '<button data-a="isolate">◎ Aislar</button><button data-a="hide">🚫 Ocultar</button>'}
         <button data-a="showall">👁 Restaurar vista</button>
       </div>
     </div>`;
   el.querySelectorAll('[data-a]').forEach((b) => {
     b.onclick = () => {
       const a = b.dataset.a;
-      if (a === 'focus') viewer.focusOn([selection.key]);
+      if (a === 'focus') selection.poi ? focusPoint(poiPos[selection.poi]) : viewer.focusOn([selection.key]);
       if (a === 'isolate') {
         for (const k of viewer.parts.keys()) viewer.setVisible(k, k === selection.key);
         viewer.focusOn([selection.key]);
@@ -311,7 +463,7 @@ function nameOf(res) {
 
 viewer.on('hover', (res, e) => {
   const n = nameOf(res);
-  if (!n || mode === 'quiz') {
+  if (!n || quiz.clickMode) {
     tooltip.classList.add('hidden');
     viewer.setHover(null);
     fx.stomach?.setHover(null);
@@ -329,11 +481,33 @@ viewer.on('hover', (res, e) => {
 });
 
 viewer.on('pick', (res) => {
-  if (mode === 'quiz') return quizAnswer(res);
-  if (!res) return select(null);
   const n = nameOf(res);
+  if (quiz.active) {
+    quiz.onPick(res, n?.region || undefined);
+    return;
+  }
+  if (noteMode) {
+    if (!res) return;
+    const pos = viewer.space.worldToLocal(res.hit.point.clone());
+    const note = Notes.add(organ.id, pos.toArray(), res.key);
+    setNoteMode(false);
+    buildNotePins();
+    buildTree();
+    select({ note: note.id });
+    return;
+  }
+  if (!res) return select(null);
   select({ key: res.key, region: n.region || undefined });
 });
+
+function setNoteMode(on) {
+  noteMode = on;
+  $('#btn-note').classList.toggle('on', on);
+  viewer.renderer.domElement.classList.toggle('placing', on);
+  $('#hud-top').querySelector('.note-hint')?.remove();
+  if (on) $('#hud-top').insertAdjacentHTML('beforeend', '<span class="chip note-hint">✏️ Haz clic en el modelo donde quieres la nota (Esc para cancelar)</span>');
+}
+document.addEventListener('keydown', (e) => e.key === 'Escape' && noteMode && setNoteMode(false));
 
 // ============================================================== toolbar
 function configureToolbar() {
@@ -365,6 +539,10 @@ function configureToolbar() {
     if (organ.extra.id === 'adh') fx.nephron?.setAdh(!!organ.extra.defaultOn);
   }
   $('#btn-labels').classList.toggle('on', labelsOn);
+  $('#btn-pois').classList.toggle('hidden', !organ.pois?.length);
+  $('#btn-pois').classList.toggle('on', poisOn);
+  setNoteMode(false);
+  syncClipUI();
   $('#hud-top').innerHTML = `<span class="chip">${esc(organ.name)} · ${viewer.parts.size} estructuras</span>`;
 }
 
@@ -377,6 +555,12 @@ function togglePop(btn, pop) {
     const w = pop.offsetWidth;
     pop.style.left = `${Math.max(8, Math.min(window.innerWidth - w - 8, r.left + r.width / 2 - w / 2))}px`;
     pop.style.top = `${r.top - pop.offsetHeight - 10}px`;
+    // el panel de corte va al costado del visor para no tapar el modelo
+    if (pop.id === 'clip-pop' && window.innerWidth > 860) {
+      const vr = $('#viewport').getBoundingClientRect();
+      pop.style.left = `${vr.right - w - 12}px`;
+      pop.style.top = `${vr.top + 12}px`;
+    }
   }
   return show;
 }
@@ -398,11 +582,8 @@ $('#toolbar').addEventListener('click', (e) => {
   }
   if (act === 'clip') {
     const on = !b.classList.contains('on');
-    b.classList.toggle('on', on);
-    viewer.setClip({ enabled: on });
-    // capas que solo tienen sentido con el corte (p. ej. pared gástrica)
-    for (const [k, p] of viewer.parts) if (p.info.showOnClip) viewer.setVisible(k, on);
-    syncTree();
+    setClipEnabled(on);
+    syncClipUI();
     if (on) togglePop(b, $('#clip-pop'));
     else $('#clip-pop').classList.add('hidden');
   }
@@ -424,9 +605,17 @@ $('#toolbar').addEventListener('click', (e) => {
       if (on && !fx.heart.running) toggleAnim($('#btn-anim'));
     }
   }
+  if (act === 'pois') {
+    poisOn = !poisOn;
+    b.classList.toggle('on', poisOn);
+    viewer.setPinsVisible('poi', poisOn);
+    if (poisOn) document.querySelector('#tree .group.pois')?.classList.remove('collapsed');
+  }
+  if (act === 'note') setNoteMode(!noteMode);
   if (act === 'tour') startTour();
   if (act !== 'tour') $('#tour-pop').classList.add('hidden');
-  if (act === 'quiz') startQuiz();
+  if (act === 'quiz') openQuizMenu();
+  if (act !== 'quiz') $('#quiz-pop').classList.add('hidden');
 });
 
 function toggleAnim(b) {
@@ -451,11 +640,60 @@ function toggleAnim(b) {
 $('#clip-axis').addEventListener('click', (e) => {
   const b = e.target.closest('button');
   if (!b) return;
-  $('#clip-axis').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
   viewer.setClip({ axis: b.dataset.axis });
+  syncClipUI();
+});
+$('#clip-mode').addEventListener('click', (e) => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  viewer.setClip({ mode: b.dataset.mode });
+  syncClipUI();
 });
 $('#clip-pos').addEventListener('input', (e) => viewer.setClip({ t: e.target.value / 1000 }));
+$('#clip-thick').addEventListener('input', (e) => viewer.setClip({ thickness: e.target.value / 100 }));
+$('#clip-tilt-a').addEventListener('input', (e) => viewer.setClip({ tiltA: +e.target.value }));
+$('#clip-tilt-b').addEventListener('input', (e) => viewer.setClip({ tiltB: +e.target.value }));
 $('#clip-flip').addEventListener('change', (e) => viewer.setClip({ flip: e.target.checked }));
+$('#clip-caps').addEventListener('change', (e) => viewer.setClip({ caps: e.target.checked }));
+
+/** Refleja el estado del corte en los controles. */
+function syncClipUI() {
+  const c = viewer.clip;
+  $('#clip-axis').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x.dataset.axis === c.axis));
+  $('#clip-mode').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x.dataset.mode === c.mode));
+  $('#clip-pos').value = Math.round(c.t * 1000);
+  $('#clip-thick').value = Math.round(c.thickness * 100);
+  $('#clip-tilt-a').value = c.tiltA;
+  $('#clip-tilt-b').value = c.tiltB;
+  $('#clip-flip').checked = c.flip;
+  $('#clip-caps').checked = c.caps;
+  $('#slab-row').classList.toggle('hidden', c.mode !== 'slab');
+  $('#flip-row').classList.toggle('hidden', c.mode === 'slab');
+  $('#clip-pos-label').textContent = c.mode === 'slab' ? 'Posición de la lámina (desliza para recorrer)' : 'Posición del plano';
+}
+
+function setClipEnabled(on) {
+  $('#btn-clip').classList.toggle('on', on);
+  viewer.setClip({ enabled: on });
+  for (const [k, p] of viewer.parts) if (p.info.showOnClip) viewer.setVisible(k, on);
+  syncTree();
+}
+
+function buildClipPresets() {
+  const box = $('#clip-presets');
+  const presets = organ.cutPresets || [];
+  box.innerHTML = presets.length ? `<div class="small muted">Cortes clínicos</div>${presets.map((c, i) => `<button data-i="${i}">${esc(c.name)}</button>`).join('')}` : '';
+  box.querySelectorAll('button').forEach((b) => {
+    b.onclick = () => {
+      const r = resolveCut(viewer, presets[+b.dataset.i]);
+      if (!r) return;
+      if (!viewer.clip.enabled) setClipEnabled(true);
+      viewer.setClipPreset(r.n, r.p);
+      box.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+      syncClipUI();
+    };
+  });
+}
 $('#xray-val').addEventListener('input', () => applyXray(true));
 $('#bpm').addEventListener('input', (e) => {
   $('#bpm-val').textContent = e.target.value;
@@ -505,86 +743,26 @@ $('#tour-next').onclick = () => (tour.i < tour.steps.length - 1 ? (tour.i++, sho
 $('#tour-close').onclick = () => stopModes();
 
 // ================================================================== quiz
-const quiz = { qs: [], i: 0, score: 0, answered: false };
-function startQuiz() {
-  stopModes();
-  mode = 'quiz';
-  select(null);
-  const pool = [...viewer.parts.keys()]
-    .filter((k) => viewer.parts.get(k).visible && k !== organ.regions?.part && viewer.parts.get(k).info.quiz !== false)
-    .map((k) => ({ key: k }));
-  if (organ.regions) organ.regions.list.forEach((r) => pool.push({ key: organ.regions.part, region: r.key }));
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  quiz.qs = pool.slice(0, 10);
-  quiz.i = 0;
-  quiz.score = 0;
-  $('#quiz-card').classList.remove('hidden');
-  showQuestion();
+const quiz = createQuiz({
+  viewer,
+  getOrgan: () => organ,
+  getFx: () => fx,
+  infoFor,
+  onStart: () => {
+    stopModes();
+    mode = 'quiz';
+    select(null);
+  },
+});
+function openQuizMenu() {
+  const pop = $('#quiz-pop');
+  const hasClin = organ.clinicalQs?.length;
+  pop.innerHTML = `<div class="small muted pop-title">Dominio en ${esc(organ.name)}: ${quiz.mastery()} %</div>${MODES.filter((m) => m.id !== 'clinical' || hasClin)
+    .map((m) => `<button data-m="${m.id}"><b>${m.label}</b><small>${m.hint}</small></button>`)
+    .join('')}`;
+  pop.querySelectorAll('button').forEach((b) => (b.onclick = () => (pop.classList.add('hidden'), quiz.start(b.dataset.m), updateProgress())));
+  togglePop($('#btn-quiz'), pop);
 }
-function showQuestion() {
-  quiz.answered = false;
-  const q = quiz.qs[quiz.i];
-  $('#quiz-progress').textContent = `Pregunta ${quiz.i + 1}/${quiz.qs.length} · Puntaje ${quiz.score}`;
-  $('#quiz-target').textContent = infoFor(q).name;
-  $('#quiz-feedback').textContent = '';
-  $('#quiz-feedback').className = 'feedback';
-  $('#quiz-next').classList.add('hidden');
-  $('#quiz-skip').classList.remove('hidden');
-  viewer.setSelected(null);
-  fx.stomach?.setSelected(null);
-  viewer.resetView();
-}
-function quizAnswer(res) {
-  if (quiz.answered || !res) return;
-  const q = quiz.qs[quiz.i];
-  const region = fx.stomach && res.key === organ.regions?.part ? fx.stomach.regionOf(res.hit) : undefined;
-  const ok = res.key === q.key && (q.region ? region === q.region : true);
-  const fb = $('#quiz-feedback');
-  quiz.answered = true;
-  if (ok) {
-    quiz.score++;
-    fb.textContent = '✓ ¡Correcto!';
-    fb.className = 'feedback ok';
-  } else {
-    const picked = infoFor({ key: res.key, region: q.region ? region : undefined });
-    fb.textContent = `✗ Eso es: ${picked.name}. Te muestro la correcta.`;
-    fb.className = 'feedback bad';
-  }
-  revealAnswer(q);
-}
-function revealAnswer(q) {
-  viewer.setSelected(q.region ? null : q.key);
-  fx.stomach?.setSelected(q.region || null);
-  viewer.setVisible(q.key, true);
-  viewer.focusOn([q.key]);
-  $('#quiz-progress').textContent = `Pregunta ${quiz.i + 1}/${quiz.qs.length} · Puntaje ${quiz.score}`;
-  $('#quiz-skip').classList.add('hidden');
-  $('#quiz-next').classList.remove('hidden');
-  $('#quiz-next').textContent = quiz.i === quiz.qs.length - 1 ? 'Ver resultado' : 'Siguiente →';
-}
-$('#quiz-skip').onclick = () => {
-  quiz.answered = true;
-  $('#quiz-feedback').textContent = 'Esta era la respuesta:';
-  revealAnswer(quiz.qs[quiz.i]);
-};
-$('#quiz-next').onclick = () => {
-  if (quiz.i < quiz.qs.length - 1) {
-    quiz.i++;
-    showQuestion();
-  } else {
-    const pct = Math.round((quiz.score / quiz.qs.length) * 100);
-    $('#quiz-target').textContent = `Resultado: ${quiz.score}/${quiz.qs.length} (${pct} %)`;
-    $('#quiz-feedback').textContent = pct >= 80 ? '¡Excelente! 🎉' : pct >= 50 ? 'Bien, sigue practicando.' : 'Repasa con el recorrido guiado y vuelve a intentarlo.';
-    $('#quiz-feedback').className = 'feedback ' + (pct >= 50 ? 'ok' : 'bad');
-    $('#quiz-next').classList.add('hidden');
-    $('#quiz-skip').classList.add('hidden');
-    viewer.setSelected(null);
-    fx.stomach?.setSelected(null);
-  }
-};
 $('#quiz-close').onclick = () => stopModes();
 
 function stopModes() {
@@ -593,8 +771,8 @@ function stopModes() {
     fx.stomach?.setFocus(null);
   }
   if (mode === 'quiz') {
-    viewer.setSelected(null);
-    fx.stomach?.setSelected(null);
+    quiz.stop();
+    updateProgress();
   }
   mode = 'explore';
   $('#tour-card').classList.add('hidden');

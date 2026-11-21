@@ -28,33 +28,33 @@ export default {
 
   parts: {
     stomach: {
-      name: 'Estómago', en: 'Stomach (gaster)', group: 'organo', color: '#dd9584',
+      name: 'Estómago', en: 'Stomach (gaster)', group: 'organo', color: '#dd9584', cap: false,
       desc: 'La superficie externa corresponde a la serosa (peritoneo visceral). Es una porción dilatada del tubo digestivo, en el hipocondrio izquierdo y el epigastrio. Tiene dos caras (anterior y posterior), dos curvaturas (menor y mayor) y dos orificios: el cardias (desde el esófago) y el píloro (hacia el duodeno). Haz clic en una región para ver su función.',
       func: 'Almacena el alimento (hasta ~1,5 L), lo mezcla y lo tritura hasta formar el quimo. Secreta ~2 L/día de jugo gástrico (HCl, pepsinógeno, factor intrínseco y moco) y regula el vaciamiento hacia el duodeno. Su pared tiene una capa muscular extra, la oblicua interna.',
     },
     m_long: {
-      name: 'Muscular externa — capa longitudinal', en: 'Longitudinal muscle layer', group: 'capas', color: '#b5544a', quiz: false, hidden: true, showOnClip: true,
+      name: 'Muscular externa — capa longitudinal', en: 'Longitudinal muscle layer', group: 'capas', color: '#b5544a', quiz: false, hidden: true, showOnClip: true, cap: false,
       desc: 'Capa muscular lisa más externa (bajo la serosa), continuación de la longitudinal del esófago. Es más gruesa a lo largo de las curvaturas. Entre esta capa y la circular está el plexo mientérico (de Auerbach). Capa esquemática: aparece al activar ✂ Corte.',
       func: 'Junto con la capa circular genera el peristaltismo. El plexo mientérico controla la motilidad, y las células intersticiales de Cajal (el marcapaso) se ubican entre las capas musculares.',
     },
     m_circ: {
-      name: 'Muscular externa — capa circular', en: 'Circular muscle layer', group: 'capas', color: '#a8443b', quiz: false, hidden: true, showOnClip: true,
+      name: 'Muscular externa — capa circular', en: 'Circular muscle layer', group: 'capas', color: '#a8443b', quiz: false, hidden: true, showOnClip: true, cap: false,
       desc: 'Capa muscular media, la más desarrollada. En el píloro se engruesa y forma el esfínter pilórico.',
       func: 'Sus contracciones anulares forman las ondas peristálticas que trituran y propulsan el contenido hacia el píloro.',
       clinic: 'Su hipertrofia en el píloro del lactante produce la estenosis hipertrófica del píloro.',
     },
     m_obl: {
-      name: 'Muscular externa — capa oblicua interna', en: 'Oblique muscle layer', group: 'capas', color: '#93362f', quiz: false, hidden: true, showOnClip: true,
+      name: 'Muscular externa — capa oblicua interna', en: 'Oblique muscle layer', group: 'capas', color: '#93362f', quiz: false, hidden: true, showOnClip: true, cap: false,
       desc: 'Capa muscular más interna, exclusiva del estómago. Solo existe en el fundus y el cuerpo (no llega al antro), y sus fibras forman la "corbata suiza" en torno al cardias.',
       func: 'Permite la mezcla y el "amasado" del contenido gástrico y refuerza el mecanismo antirreflujo en el cardias.',
     },
     submucosa: {
-      name: 'Submucosa', en: 'Submucosa', group: 'capas', color: '#f0d9b5', quiz: false, hidden: true, showOnClip: true,
+      name: 'Submucosa', en: 'Submucosa', group: 'capas', color: '#f0d9b5', quiz: false, hidden: true, showOnClip: true, cap: false,
       desc: 'Tejido conectivo laxo con vasos sanguíneos y linfáticos y con el plexo submucoso (de Meissner).',
       func: 'El plexo submucoso regula la secreción glandular y el flujo sanguíneo local. Los pliegues gástricos (rugosidades) se forman por plegamiento de la mucosa y la submucosa.',
     },
     mucosa: {
-      name: 'Mucosa gástrica', en: 'Gastric mucosa', group: 'capas', color: '#e06a7a', quiz: false, hidden: true, showOnClip: true,
+      name: 'Mucosa gástrica', en: 'Gastric mucosa', group: 'capas', color: '#e06a7a', quiz: false, hidden: true, showOnClip: true, cap: false,
       desc: 'Epitelio cilíndrico simple secretor de moco, con fositas (foveolas) gástricas donde desembocan las glándulas, más la lámina propia y la muscularis mucosae. Su tipo de glándula cambia por región: cardiales, oxínticas en fundus y cuerpo, y pilóricas en el antro.',
       func: 'Secreta HCl, pepsinógeno, factor intrínseco, moco y HCO₃⁻, además de hormonas (gastrina, somatostatina, grelina). Mira la pestaña Fisiología.',
       clinic: 'Gastritis, úlcera péptica, metaplasia intestinal y adenocarcinoma gástrico nacen en esta capa.',

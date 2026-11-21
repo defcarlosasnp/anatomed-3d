@@ -21,6 +21,7 @@
         <div class="panel-head">
           <h2 id="organ-title">—</h2>
           <p id="organ-sub" class="muted"></p>
+          <div id="progress" class="progress"></div>
           <input id="search" type="search" placeholder="Buscar estructura…" autocomplete="off" />
         </div>
         <div class="panel-body" id="tree"></div>
@@ -50,8 +51,7 @@
 
         <div class="card hidden" id="quiz-card">
           <div class="card-head"><span id="quiz-progress"></span><button class="x" id="quiz-close" aria-label="Cerrar">✕</button></div>
-          <p class="muted small">Haz clic en el modelo sobre:</p>
-          <h3 id="quiz-target"></h3>
+          <div id="quiz-body"></div>
           <p id="quiz-feedback" class="feedback"></p>
           <div class="card-actions"><button id="quiz-skip">Saltar</button><button id="quiz-next" class="primary hidden">Siguiente →</button></div>
         </div>
@@ -59,14 +59,31 @@
         <div class="toolbar" id="toolbar">
           <button data-act="reset" title="Restablecer vista">⟲ Vista</button>
           <button data-act="labels" title="Etiquetas" class="toggle" id="btn-labels">🏷 Etiquetas</button>
+          <button data-act="pois" title="Puntos clínicos" class="toggle" id="btn-pois">📍 Puntos</button>
+          <button data-act="note" title="Agregar una nota en el modelo" class="toggle" id="btn-note">✏️ Nota</button>
           <div class="tool-group">
             <button data-act="clip" class="toggle" id="btn-clip" title="Plano de corte">✂ Corte</button>
             <div class="tool-pop hidden" id="clip-pop">
+              <div class="seg" id="clip-mode">
+                <button data-mode="plane" class="on">Plano</button><button data-mode="slab">Tomografía (lámina)</button>
+              </div>
               <div class="seg" id="clip-axis">
                 <button data-axis="x" class="on">Sagital</button><button data-axis="y">Transversal</button><button data-axis="z">Coronal</button>
               </div>
+              <label class="small muted" id="clip-pos-label">Posición del plano</label>
               <input type="range" id="clip-pos" min="0" max="1000" value="500" />
-              <label class="chk"><input type="checkbox" id="clip-flip" /> Invertir lado</label>
+              <div id="slab-row" class="hidden">
+                <label class="small muted">Grosor de la lámina</label>
+                <input type="range" id="clip-thick" min="1" max="40" value="8" />
+              </div>
+              <details class="tilt">
+                <summary class="small">Inclinar el plano</summary>
+                <label class="small muted">Eje 1</label><input type="range" id="clip-tilt-a" min="-75" max="75" value="0" />
+                <label class="small muted">Eje 2</label><input type="range" id="clip-tilt-b" min="-75" max="75" value="0" />
+              </details>
+              <label class="chk" id="flip-row"><input type="checkbox" id="clip-flip" /> Invertir lado</label>
+              <label class="chk"><input type="checkbox" id="clip-caps" checked /> Rellenar superficies de corte</label>
+              <div class="presets" id="clip-presets"></div>
             </div>
           </div>
           <div class="tool-group">
@@ -81,6 +98,7 @@
           <button data-act="tour" id="btn-tour">🧭 Recorrido</button>
           <div class="tool-pop menu hidden" id="tour-pop"></div>
           <button data-act="quiz" id="btn-quiz">🎯 Quiz</button>
+          <div class="tool-pop menu hidden" id="quiz-pop"></div>
         </div>
       </section>
 

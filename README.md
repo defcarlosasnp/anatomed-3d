@@ -35,21 +35,27 @@ npm run build
 |---|---|
 | Rotar / zoom / mover | Arrastrar, rueda, clic derecho (en el celular: 1 dedo, pellizcar, 2 dedos) |
 | Clic / doble clic | Información de la estructura / enfocarla |
-| Lista lateral | Mostrar u ocultar, buscar, aislar, restaurar |
-| ✂ Corte | Plano sagital, transversal o coronal |
+| Lista lateral | Mostrar u ocultar, buscar, aislar, restaurar; marca ✓ lo que ya revisaste y muestra tu progreso |
+| ✂ Corte | **Plano** o **tomografía** (lámina que se recorre corte a corte), sagital, transversal, coronal o inclinado; superficies de corte **rellenas** con el color de cada estructura |
+| Cortes clínicos | Predefinidos por órgano: vistas ecocardiográficas (apical 4 cámaras, eje largo y corto), cortes de atlas del encéfalo, plano de Cantlie, coronal renal, etc. |
+| 📍 Puntos | Puntos de referencia clínicos numerados (focos de auscultación, cisuras, surcos, Calot, Brödel…) con su ficha |
+| ✏️ Nota | Clic en el modelo para dejar tus propias notas (se guardan en tu navegador) |
 | ◐ Transparencia | Vuelve translúcida la capa externa de cada órgano |
 | 🏷 Etiquetas | Nombres sobre el modelo |
 | ▶ Animación | Latido, respiración, peristaltismo o flujo tubular, según el órgano |
 | 🧭 Recorrido | Guías paso a paso (con menú si hay varias) |
-| 🎯 Quiz | 10 preguntas: haz clic en la estructura pedida |
+| 🎯 Quiz | 4 modos: clic en la estructura, escribir el nombre, preguntas clínicas de alternativas y repaso de errores (repite más lo que fallas) |
 
 ## Estructura del proyecto
 
 ```
 public/models/          GLB extraídos y comprimidos (meshopt)
 src/viewer.js           motor 3D (Three.js): carga, picking, corte, cámara, etiquetas, partes generadas
+src/clipping.js         cortes: plano/lámina, inclinación y relleno (stencil)
 src/effects/            latido + conducción, cuerdas tendinosas, respiración, estómago, nefrona
+src/features/           quiz, progreso y notas (localStorage), ubicación de puntos y cortes
 src/organs/*.js         contenido de cada órgano (textos, grupos, colores, recorridos, fisiología)
+src/organs/extras.js    cortes clínicos, puntos clínicos y preguntas clínicas por órgano
 src/main.js             interfaz
 tools/                  scripts para extraer, alinear, comprimir y validar modelos
 tools/configs/          configuraciones usadas para generar los GLB actuales
@@ -80,4 +86,5 @@ Si publicas la app, mantén estas atribuciones. Los modelos derivados de Z-Anato
 - **Elementos esquemáticos:** el sistema de conducción, las cuerdas tendinosas, las capas gástricas y la nefrona se generan por código. Son correctos en su organización, pero no son mallas anatómicas.
 - **Regiones del estómago:** son aproximadas. Se calculan a partir de los puntos de referencia de Z-Anatomy.
 - **Lado de los modelos:** el riñón es el izquierdo. Los núcleos del tálamo y de la amígdala están ocultos por defecto, porque se superponen a la estructura completa.
+- **Datos guardados:** las notas y el progreso se guardan solo en el navegador donde estudias. No se sincronizan entre dispositivos.
 - **Uso:** el contenido es de apoyo al estudio y no reemplaza la bibliografía de los ramos.
