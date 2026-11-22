@@ -14,7 +14,7 @@
       <div class="brand">AnatoMed <span>3D</span></div>
       <nav class="organ-tabs" id="organ-tabs"></nav>
       <button class="quality-btn" id="btn-data" title="Respaldar o pasar tus notas y progreso a otro dispositivo">Mis datos</button>
-      <button class="quality-btn" id="btn-quality">Visual: alta</button>
+      <button class="quality-btn" id="btn-quality">Gráficos: alta calidad</button>
       <button class="icon-btn mobile-only" id="btn-right" aria-label="Información">ⓘ</button>
     </header>
 
@@ -59,12 +59,19 @@
         </div>
 
         <div class="toolbar" id="toolbar">
-          <button data-act="reset" title="Restablecer vista">Vista</button>
-          <button data-act="labels" title="Etiquetas" class="toggle" id="btn-labels">Etiquetas</button>
-          <button data-act="pois" title="Puntos clínicos" class="toggle" id="btn-pois">Puntos</button>
-          <button data-act="note" title="Agregar una nota en el modelo" class="toggle" id="btn-note">Nota</button>
-          <div class="tool-group">
-            <button data-act="clip" class="toggle" id="btn-clip" title="Plano de corte">Corte</button>
+          <div class="tb-group" role="group" aria-label="Ver">
+            <button data-act="reset" data-icon="reset" title="Volver a la vista inicial"><span class="lbl">Vista</span></button>
+            <button data-act="labels" data-icon="tag" title="Mostrar nombres sobre el modelo" class="toggle" id="btn-labels"><span class="lbl">Etiquetas</span></button>
+            <div class="tool-group">
+              <button data-act="xray" data-icon="layers" class="toggle" id="btn-xray" title="Volver translúcida la capa externa"><span class="lbl">Transparencia</span></button>
+            <div class="tool-pop hidden" id="xray-pop">
+              <div class="pop-head"><span class="small muted" id="xray-label">Capa externa</span><button class="x" id="xray-pop-close" title="Cerrar panel">✕</button></div>
+              <input type="range" id="xray-val" min="5" max="100" value="25" />
+              <button class="pop-off" id="xray-off">Quitar transparencia</button>
+            </div>
+            </div>
+            <div class="tool-group">
+              <button data-act="clip" data-icon="cut" class="toggle" id="btn-clip" title="Cortar el modelo con un plano"><span class="lbl">Corte</span></button>
             <div class="tool-pop hidden" id="clip-pop">
               <div class="pop-head"><b>Corte</b><button class="x" id="clip-pop-close" title="Cerrar panel (el corte sigue activo)">✕</button></div>
               <div class="seg" id="clip-mode">
@@ -89,22 +96,21 @@
               <div class="presets" id="clip-presets"></div>
               <button class="pop-off" id="clip-off">Quitar corte</button>
             </div>
-          </div>
-          <div class="tool-group">
-            <button data-act="xray" class="toggle" id="btn-xray" title="Transparencia de la capa externa">Transparencia</button>
-            <div class="tool-pop hidden" id="xray-pop">
-              <div class="pop-head"><span class="small muted" id="xray-label">Capa externa</span><button class="x" id="xray-pop-close" title="Cerrar panel">✕</button></div>
-              <input type="range" id="xray-val" min="5" max="100" value="25" />
-              <button class="pop-off" id="xray-off">Quitar transparencia</button>
             </div>
           </div>
-          <button data-act="anim" class="toggle" id="btn-anim">▶ Animar</button>
-          <button data-act="extra" class="toggle hidden" id="btn-extra"></button>
-          <div class="tool-pop menu hidden" id="gaze-pop"></div>
-          <button data-act="tour" id="btn-tour">Recorrido</button>
-          <div class="tool-pop menu hidden" id="tour-pop"></div>
-          <button data-act="quiz" id="btn-quiz">Quiz</button>
-          <div class="tool-pop menu hidden" id="quiz-pop"></div>
+          <div class="tb-group" role="group" aria-label="Explorar">
+            <button data-act="anim" data-icon="play" class="toggle" id="btn-anim"><span class="lbl">Animar</span></button>
+            <button data-act="extra" data-icon="spark" class="toggle hidden" id="btn-extra"><span class="lbl"></span></button>
+            <div class="tool-pop menu hidden" id="gaze-pop"></div>
+            <button data-act="pois" data-icon="pin" title="Puntos de referencia clínicos" class="toggle" id="btn-pois"><span class="lbl">Puntos</span></button>
+            <button data-act="note" data-icon="pencil" title="Agregar una nota en el modelo" class="toggle" id="btn-note"><span class="lbl">Nota</span></button>
+          </div>
+          <div class="tb-group" role="group" aria-label="Estudiar">
+            <button data-act="tour" data-icon="route" id="btn-tour" title="Recorrido guiado paso a paso"><span class="lbl">Recorrido</span></button>
+            <div class="tool-pop menu hidden" id="tour-pop"></div>
+            <button data-act="quiz" data-icon="target" id="btn-quiz" title="Ponerte a prueba"><span class="lbl">Quiz</span></button>
+            <div class="tool-pop menu hidden" id="quiz-pop"></div>
+          </div>
         </div>
       </section>
 

@@ -47,7 +47,7 @@ npm run build
 | ▶ Animación | Latido, respiración, peristaltismo o flujo tubular, según el órgano |
 | Recorrido | Guías paso a paso (con menú si hay varias) |
 | Mis datos | Exportar e importar un respaldo (.json) de notas y progreso, o pasarlos a otro dispositivo con un código QR o un enlace (los datos viajan dentro del enlace, sin servidor) |
-| Visual | Calidad alta (oclusión ambiental, sombra de contacto, contorno de selección) o básica para equipos modestos |
+| Gráficos | Calidad alta (oclusión ambiental, sombra de contacto, contorno de selección) o básica para equipos modestos |
 | Quiz | 4 modos: clic en la estructura, escribir el nombre, preguntas clínicas de alternativas y repaso de errores (repite más lo que fallas) |
 
 ## Estructura del proyecto

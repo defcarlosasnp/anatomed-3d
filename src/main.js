@@ -9,6 +9,7 @@ import { createBreathing } from './effects/breathing.js';
 import { createNephronFlow } from './effects/nephronFlow.js';
 import { createEye, GAZES } from './effects/eye.js';
 import { createQuiz, MODES } from './features/quiz.js';
+import { ICONS, EYE, iconize } from './icons.js';
 import { Progress, Notes, load as loadPref, save as savePref, summary, resetAll } from './features/store.js';
 import { downloadBackup, importBackupText, buildSyncLink, readSyncFromUrl, applySync, drawQR } from './features/sync.js';
 import { resolvePoint, resolveCut } from './features/geometry.js';
@@ -19,6 +20,9 @@ const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<
 const viewer = new Viewer($('#viewport'));
 // los popovers van en <body>: la barra usa transform, lo que rompe position: fixed
 document.querySelectorAll('.tool-pop').forEach((p) => document.body.appendChild(p));
+iconize(document.querySelectorAll('#toolbar [data-icon]'));
+// el monitor (ECG) se ubica sobre la barra, aunque esta ocupe dos filas
+new ResizeObserver(() => $('#viewport').style.setProperty('--tb-h', `${$('#toolbar').offsetHeight}px`)).observe($('#toolbar'));
 let organ = null;
 let fx = {}; // efectos del órgano actual (heartbeat / stomach)
 let selection = null; // { key, region }
@@ -183,7 +187,7 @@ function buildTree() {
     div.innerHTML = `
       <div class="group-head">
         <span class="caret">▾</span>
-        <button class="eye" title="Mostrar/ocultar grupo">◉</button>
+        <button class="eye" title="Mostrar/ocultar grupo">${EYE}</button>
         <span class="swatch" style="background:${g.color}"></span>
         <span>${esc(g.name)}</span>
         <span class="count">${keys.length}</span>
@@ -195,7 +199,7 @@ function buildTree() {
       const row = document.createElement('div');
       row.className = 'item';
       row.dataset.key = k;
-      row.innerHTML = `<button class="eye" title="Mostrar/ocultar">◉</button><span class="swatch" style="background:#${p.baseColor.getHexString()}"></span><span class="name">${esc(p.info.name)}</span><span class="seen-mark" title="Revisada">✓</span>`;
+      row.innerHTML = `<button class="eye" title="Mostrar/ocultar">${EYE}</button><span class="swatch" style="background:#${p.baseColor.getHexString()}"></span><span class="name">${esc(p.info.name)}</span><span class="seen-mark" title="Revisada">✓</span>`;
       row.querySelector('.eye').onclick = (e) => {
         e.stopPropagation();
         viewer.setVisible(k, !p.visible);
@@ -404,11 +408,7 @@ function renderInfo() {
   if (selection?.note) return renderNote(el);
   const info = infoFor(selection);
   if (!info) {
-    el.innerHTML = `
-      <div class="info-empty">
-        Haz <b>clic</b> en una estructura del modelo o de la lista para ver su anatomía y fisiología.<br><br>
-        <span class="small">Arrastrar: rotar · Rueda: zoom · Clic derecho: mover · Doble clic: enfocar<br>Un dedo: rotar · Pellizcar: zoom · Dos dedos: mover</span>
-      </div>`;
+    renderOverview(el);
     return;
   }
   el.innerHTML = `
@@ -439,6 +439,53 @@ function renderInfo() {
       }
       if (a === 'showall') for (const [k, p] of viewer.parts) viewer.setVisible(k, !p.info.hidden);
       syncTree();
+    };
+  });
+}
+
+/** Resumen del órgano con accesos directos (cuando no hay nada seleccionado). */
+function renderOverview(el) {
+  const n = (x) => x?.length || 0;
+  const stats = [
+    [viewer.parts.size, 'estructuras'],
+    [n(organ.pois), 'puntos clínicos'],
+    [n(organ.cutPresets), 'cortes clínicos'],
+    [n(organ.clinicalQs), 'preguntas clínicas'],
+  ].filter(([v]) => v);
+  const tours = organ.tours || [];
+  const actions = [
+    tours.length && ['tour', 'route', 'Empezar recorrido guiado', tours.length > 1 ? `${tours.length} recorridos disponibles` : `${n(tours[0].steps)} pasos`],
+    organ.cutPresets?.length && ['cuts', 'cut', 'Ver cortes clínicos', 'Planos como en un atlas o una imagen'],
+    ['quiz', 'target', 'Hacer un quiz', 'Clic, escribir el nombre o casos clínicos'],
+    ['phys', 'book', 'Leer la fisiología', 'Resumen del funcionamiento del órgano'],
+  ].filter(Boolean);
+  el.innerHTML = `
+    <div class="overview">
+      <p class="ov-kicker">${esc(organ.subtitle || '')}</p>
+      <h2>${esc(organ.name)}</h2>
+      <div class="ov-stats">${stats.map(([v, l]) => `<div><b>${v}</b><span>${l}</span></div>`).join('')}</div>
+      <p class="ov-lead">Haz clic en una estructura del modelo o de la lista para ver su anatomía, fisiología y correlación clínica.</p>
+      <div class="ov-actions">${actions
+        .map(([a, ic, t, sub]) => `<button data-ov="${a}">${ICONS[ic]}<span><b>${t}</b><small>${esc(sub)}</small></span></button>`)
+        .join('')}</div>
+      <div class="ov-help">
+        <h4>Controles</h4>
+        <dl>
+          <dt>Rotar</dt><dd>Arrastrar · un dedo</dd>
+          <dt>Zoom</dt><dd>Rueda · pellizcar</dd>
+          <dt>Mover</dt><dd>Clic derecho · dos dedos</dd>
+          <dt>Enfocar</dt><dd>Doble clic en una estructura</dd>
+        </dl>
+      </div>
+    </div>`;
+  el.querySelectorAll('[data-ov]').forEach((b) => {
+    b.onclick = () => {
+      const a = b.dataset.ov;
+      if (a === 'tour') $('#btn-tour').click();
+      if (a === 'quiz') $('#btn-quiz').click();
+      if (a === 'phys') switchTab('phys');
+      if (a === 'cuts' && (!$('#btn-clip').classList.contains('on') || $('#clip-pop').classList.contains('hidden'))) $('#btn-clip').click();
+      if (window.innerWidth <= 860) $('#panel-right').classList.remove('open');
     };
   });
 }
@@ -514,11 +561,20 @@ function setNoteMode(on) {
 document.addEventListener('keydown', (e) => e.key === 'Escape' && noteMode && setNoteMode(false));
 
 // ============================================================== toolbar
+// los botones con texto variable conservan su ícono
+const setLabel = (b, txt) => (b.querySelector('.lbl').textContent = txt);
+const setIcon = (b, name) => (b.querySelector('svg').outerHTML = ICONS[name] || ICONS.spark);
+const EXTRA_ICONS = { conduction: 'zap', regions: 'grid', adh: 'drop', gaze: 'eyes' };
+
 function configureToolbar() {
   $('#xray-label').textContent = `Opacidad: ${organ.xray.label}`;
   $('#btn-anim').classList.toggle('hidden', !fx.anim);
   $('#btn-anim').classList.remove('on');
-  if (fx.anim) $('#btn-anim').textContent = `▶ ${fx.anim.label}`;
+  if (fx.anim) {
+    setLabel($('#btn-anim'), fx.anim.label);
+    setIcon($('#btn-anim'), 'play');
+    $('#btn-anim').title = `Iniciar o pausar: ${fx.anim.label.toLowerCase()}`;
+  }
   if (fx.anim?.panel) {
     const pn = fx.anim.panel;
     Object.assign($('#bpm'), { min: pn.min, max: pn.max, value: pn.value });
@@ -537,7 +593,8 @@ function configureToolbar() {
   const ex = $('#btn-extra');
   ex.classList.toggle('hidden', !organ.extra);
   if (organ.extra) {
-    ex.textContent = organ.extra.label;
+    setLabel(ex, organ.extra.label);
+    setIcon(ex, EXTRA_ICONS[organ.extra.id]);
     ex.classList.toggle('on', !!organ.extra.defaultOn);
     if (organ.extra.id === 'regions') fx.stomach?.setShow(!!organ.extra.defaultOn);
     if (organ.extra.id === 'adh') fx.nephron?.setAdh(!!organ.extra.defaultOn);
@@ -648,7 +705,7 @@ function toggleAnim(b) {
   if (!fx.anim) return;
   const on = !b.classList.contains('on');
   b.classList.toggle('on', on);
-  b.textContent = `${on ? '⏸' : '▶'} ${fx.anim.label}`;
+  setIcon(b, on ? 'pause' : 'play');
   $('#ecg').classList.toggle('hidden', !(on && fx.anim.panel));
   if (on) fx.anim.ctrl.start();
   else {
@@ -771,8 +828,8 @@ const isMobile = window.matchMedia('(pointer: coarse)').matches || window.innerW
 let quality = loadPref('anatomed.quality', isMobile ? 'low' : 'high');
 function applyQuality() {
   viewer.visuals.setQuality(quality);
-  $('#btn-quality').textContent = quality === 'high' ? 'Visual: alta' : 'Visual: básica';
-  $('#btn-quality').title = quality === 'high' ? 'Oclusión ambiental, sombras y contorno de selección (requiere más GPU)' : 'Render simple (más rápido)';
+  $('#btn-quality').textContent = quality === 'high' ? 'Gráficos: alta calidad' : 'Gráficos: rápidos';
+  $('#btn-quality').title = quality === 'high' ? 'Sombras, oclusión ambiental y contorno de selección. Clic para cambiar a gráficos rápidos (equipos modestos).' : 'Render simple y rápido. Clic para activar sombras y mejor iluminación.';
 }
 $('#btn-quality').onclick = () => {
   quality = quality === 'high' ? 'low' : 'high';
