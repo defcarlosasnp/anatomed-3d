@@ -66,6 +66,7 @@
           <div class="tool-group">
             <button data-act="clip" class="toggle" id="btn-clip" title="Plano de corte">✂ Corte</button>
             <div class="tool-pop hidden" id="clip-pop">
+              <div class="pop-head"><b>✂ Corte</b><button class="x" id="clip-pop-close" title="Cerrar panel (el corte sigue activo)">✕</button></div>
               <div class="seg" id="clip-mode">
                 <button data-mode="plane" class="on">Plano</button><button data-mode="slab">Tomografía (lámina)</button>
               </div>
@@ -86,13 +87,15 @@
               <label class="chk" id="flip-row"><input type="checkbox" id="clip-flip" /> Invertir lado</label>
               <label class="chk"><input type="checkbox" id="clip-caps" checked /> Rellenar superficies de corte</label>
               <div class="presets" id="clip-presets"></div>
+              <button class="pop-off" id="clip-off">Quitar corte</button>
             </div>
           </div>
           <div class="tool-group">
             <button data-act="xray" class="toggle" id="btn-xray" title="Transparencia de la capa externa">◐ Transparencia</button>
             <div class="tool-pop hidden" id="xray-pop">
-              <span class="small muted" id="xray-label">Capa externa</span>
+              <div class="pop-head"><span class="small muted" id="xray-label">Capa externa</span><button class="x" id="xray-pop-close" title="Cerrar panel">✕</button></div>
               <input type="range" id="xray-val" min="5" max="100" value="25" />
+              <button class="pop-off" id="xray-off">Quitar transparencia</button>
             </div>
           </div>
           <button data-act="anim" class="toggle" id="btn-anim">▶ Animar</button>

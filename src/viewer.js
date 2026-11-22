@@ -503,6 +503,19 @@ export class Viewer {
     };
   }
 
+  /** Con el corte activo, oculta etiquetas y pines cuyo punto quedó en la zona retirada. */
+  _hideClippedLabels() {
+    const on = this.clipSys.state.enabled;
+    if (!on && !this._labelsWereClipped) return;
+    const w = new THREE.Vector3();
+    this.space.traverse((o) => {
+      if (!o.isCSS2DObject) return;
+      const clipped = on && this.clipSys.isClipped(o.getWorldPosition(w));
+      o.element.classList.toggle('clipped', clipped);
+    });
+    this._labelsWereClipped = on;
+  }
+
   _resize() {
     const w = this.container.clientWidth;
     const h = this.container.clientHeight;
@@ -522,6 +535,7 @@ export class Viewer {
     for (const fn of this.tickers) fn(dt, t);
     this.controls.update();
     this.visuals.render();
+    this._hideClippedLabels();
     this.labelRenderer.render(this.scene, this.camera);
   }
 }

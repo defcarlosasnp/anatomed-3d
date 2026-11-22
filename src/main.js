@@ -553,7 +553,8 @@ function configureToolbar() {
 
 function togglePop(btn, pop) {
   const show = pop.classList.contains('hidden');
-  document.querySelectorAll('.tool-pop').forEach((p) => p.classList.add('hidden'));
+  document.querySelectorAll('.tool-pop.menu').forEach((p) => p.classList.add('hidden'));
+  pop.classList.add('hidden');
   if (show) {
     pop.classList.remove('hidden');
     const r = btn.getBoundingClientRect();
@@ -586,18 +587,34 @@ $('#toolbar').addEventListener('click', (e) => {
     viewer.setLabelsVisible(labelsOn);
   }
   if (act === 'clip') {
-    const on = !b.classList.contains('on');
-    setClipEnabled(on);
-    syncClipUI();
-    if (on) togglePop(b, $('#clip-pop'));
-    else $('#clip-pop').classList.add('hidden');
+    const pop = $('#clip-pop');
+    const active = b.classList.contains('on');
+    if (!active) {
+      setClipEnabled(true);
+      syncClipUI();
+      togglePop(b, pop);
+    } else if (pop.classList.contains('hidden')) {
+      syncClipUI();
+      togglePop(b, pop); // ya estaba activo: solo reabre el panel
+    } else {
+      setClipEnabled(false);
+      syncClipUI();
+      pop.classList.add('hidden');
+    }
   }
   if (act === 'xray') {
-    const on = !b.classList.contains('on');
-    b.classList.toggle('on', on);
-    applyXray(on);
-    if (on) togglePop(b, $('#xray-pop'));
-    else $('#xray-pop').classList.add('hidden');
+    const pop = $('#xray-pop');
+    const active = b.classList.contains('on');
+    if (!active) {
+      b.classList.add('on');
+      applyXray(true);
+      togglePop(b, pop);
+    } else if (pop.classList.contains('hidden')) togglePop(b, pop);
+    else {
+      b.classList.remove('on');
+      applyXray(false);
+      pop.classList.add('hidden');
+    }
   }
   if (act === 'anim') toggleAnim(b);
   if (act === 'extra') {
@@ -714,10 +731,24 @@ $('#bpm').addEventListener('input', (e) => {
   fx.anim?.ctrl.setRate?.(+e.target.value);
 });
 document.addEventListener('pointerdown', (e) => {
-  if (!e.target.closest('.tool-pop') && !e.target.closest('.tool-group')) {
-    document.querySelectorAll('.tool-pop').forEach((p) => p.classList.add('hidden'));
+  // los menús (recorridos, quiz, movimientos) se cierran al tocar afuera;
+  // los paneles de corte y transparencia quedan abiertos para poder rotar el modelo
+  if (!e.target.closest('.tool-pop') && !e.target.closest('.tool-group') && !e.target.closest('[data-act]')) {
+    document.querySelectorAll('.tool-pop.menu').forEach((p) => p.classList.add('hidden'));
   }
 });
+$('#clip-pop-close').onclick = () => $('#clip-pop').classList.add('hidden');
+$('#xray-pop-close').onclick = () => $('#xray-pop').classList.add('hidden');
+$('#clip-off').onclick = () => {
+  setClipEnabled(false);
+  syncClipUI();
+  $('#clip-pop').classList.add('hidden');
+};
+$('#xray-off').onclick = () => {
+  $('#btn-xray').classList.remove('on');
+  applyXray(false);
+  $('#xray-pop').classList.add('hidden');
+};
 
 // ====================================================== movimientos oculares
 function openGazeMenu(btn) {
