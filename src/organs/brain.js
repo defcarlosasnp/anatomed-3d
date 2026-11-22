@@ -270,7 +270,7 @@ const GROUP_INFO = {
   limbico: { func: 'Sistema límbico: emoción, motivación, memoria y conductas de supervivencia. El circuito de Papez es hipocampo → fórnix → cuerpos mamilares → tálamo anterior → cíngulo → corteza entorrinal → hipocampo.' },
   amigdala: { func: 'Los núcleos basolateral (entrada) y central (salida hacia el hipotálamo y el tronco) median las respuestas de miedo. Activa los núcleos para verlos dentro del complejo.' },
   basales: { func: 'Circuito motor de los ganglios basales: corteza → estriado → (vía directa: GPi | vía indirecta: GPe → subtalámico → GPi) → tálamo VA/VL → corteza. La vía directa facilita el movimiento y la indirecta lo frena. La dopamina nigral favorece la directa (D1) e inhibe la indirecta (D2).', clinic: 'Hipocinéticos: Parkinson. Hipercinéticos: Huntington (corea), hemibalismo (lesión subtalámica), distonías.' },
-  talamo: { func: 'Relevo y modulación de la información hacia la corteza. Los núcleos están ocultos por defecto: activa el ojo 👁 del grupo para verlos (y oculta el tálamo completo).' },
+  talamo: { func: 'Relevo y modulación de la información hacia la corteza. Los núcleos están ocultos por defecto: activa el ojo del grupo para verlos (y oculta el tálamo completo).' },
   hipotalamo: { func: 'Homeostasis y control neuroendocrino y autonómico. El epitálamo (habénula y pineal) regula los ritmos y la recompensa.' },
   tronco: { func: 'Por el tronco pasan todos los tractos ascendentes y descendentes. Contiene los núcleos de los pares craneales III–XII, la formación reticular (alerta y SARA) y los centros vitales (respiración y control cardiovascular).', clinic: 'Los síndromes cruzados (par craneal ipsilateral con hemiparesia o hipoestesia contralateral) localizan la lesión en el tronco.' },
   cerebelo: { func: 'Coordina el movimiento, el equilibrio, el tono y el aprendizaje motor comparando la orden motora con la retroalimentación sensorial. Actúa sobre el mismo lado del cuerpo.', clinic: 'Síndrome cerebeloso: ataxia, dismetría, disdiadococinesia, temblor intencional, nistagmo, disartria escándida e hipotonía. Romberg negativo (a diferencia de la ataxia sensitiva).' },
@@ -375,8 +375,8 @@ export default {
       open: true,
       html: `
 <ul>
-<li>Usa <b>◐ Transparencia</b> para volver translúcida la corteza y ver los núcleos profundos (ganglios basales, tálamo, hipocampo y ventrículos).</li>
-<li>Usa <b>✂ Corte</b> (sagital, coronal o transversal) como en los cortes de un atlas o de una resonancia.</li>
+<li>Usa <b>Transparencia</b> para volver translúcida la corteza y ver los núcleos profundos (ganglios basales, tálamo, hipocampo y ventrículos).</li>
+<li>Usa <b>Corte</b> (sagital, coronal o transversal) como en los cortes de un atlas o de una resonancia.</li>
 <li>Los núcleos del tálamo y de la amígdala están ocultos por defecto (se superponen al tálamo y la amígdala completos). Actívalos desde la lista.</li>
 <li>Hay 5 recorridos: vía motora, lenguaje, Papez, ganglios basales y LCR.</li>
 </ul>`,

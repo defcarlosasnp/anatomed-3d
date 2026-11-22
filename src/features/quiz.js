@@ -76,10 +76,10 @@ const shuffle = (arr) => {
 };
 
 export const MODES = [
-  { id: 'click', label: '🎯 Clic en la estructura', hint: 'Te nombro una estructura y la encuentras en el modelo' },
-  { id: 'write', label: '✍️ Escribe el nombre', hint: 'Resalto una estructura y escribes cómo se llama' },
-  { id: 'clinical', label: '🩺 Preguntas clínicas', hint: 'Casos y preguntas de alternativas' },
-  { id: 'review', label: '🔁 Repasar mis errores', hint: 'Solo lo que más has fallado' },
+  { id: 'click', label: 'Clic en la estructura', hint: 'Te nombro una estructura y la encuentras en el modelo' },
+  { id: 'write', label: 'Escribe el nombre', hint: 'Resalto una estructura y escribes cómo se llama' },
+  { id: 'clinical', label: 'Preguntas clínicas', hint: 'Casos y preguntas de alternativas' },
+  { id: 'review', label: 'Repasar mis errores', hint: 'Solo lo que más has fallado' },
 ];
 
 export function createQuiz(ctx) {
@@ -135,7 +135,7 @@ export function createQuiz(ctx) {
       let pool = poolItems();
       if (mode === 'review') {
         pool = pool.filter((it) => Progress.stat(organ.id, itemId(it)).w > 0);
-        if (!pool.length) return message('No tienes errores registrados en este órgano. 🎉 Haz primero un quiz de clic o de escribir.');
+        if (!pool.length) return message('No tienes errores registrados en este órgano. Haz primero un quiz de clic o de escribir.');
         pool.sort((a, b) => {
           const sa = Progress.stat(organ.id, itemId(a));
           const sb = Progress.stat(organ.id, itemId(b));
@@ -281,7 +281,7 @@ export function createQuiz(ctx) {
       <p class="muted small">Dominio acumulado de este órgano: ${mastery()} %</p>
       ${missNames.length ? `<p class="small"><b>Para repasar:</b></p><ul class="small misses">${missNames.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}`;
     const fb = $('#quiz-feedback');
-    fb.textContent = pct >= 80 ? '¡Excelente! 🎉' : pct >= 50 ? 'Bien, sigue practicando.' : 'Repasa con el recorrido guiado y vuelve a intentarlo.';
+    fb.textContent = pct >= 80 ? '¡Excelente!' : pct >= 50 ? 'Bien, sigue practicando.' : 'Repasa con el recorrido guiado y vuelve a intentarlo.';
     fb.className = `feedback ${pct >= 50 ? 'ok' : 'bad'}`;
     $('#quiz-next').classList.add('hidden');
     $('#quiz-skip').classList.add('hidden');

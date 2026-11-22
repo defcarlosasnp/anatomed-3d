@@ -9,16 +9,6 @@ import { EXTRAS } from './extras.js';
 import eye from './eye.js';
 import intestine from './intestine.js';
 
-heart.icon = '🫀';
-stomach.icon = '🫃';
-lungs.icon = '🫁';
-kidney.icon = '🫘';
-nephron.icon = '🔬';
-liver.icon = '🟤';
-brain.icon = '🧠';
-eye.icon = '👁️';
-intestine.icon = '🌀';
-
 // Para agregar un órgano nuevo: crear su archivo de datos, extraer el GLB (ver tools/) y añadirlo aquí.
 export const organs = [heart, lungs, stomach, intestine, liver, kidney, nephron, brain, eye];
 for (const o of organs) Object.assign(o, EXTRAS[o.id] || {});

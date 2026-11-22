@@ -2,7 +2,7 @@
 
 Atlas anatómico 3D interactivo para estudiar anatomía y fisiología en el navegador.
 
-**👉 Abrir la app: https://defcarlosasnp.github.io/anatomed-3d/**
+** Abrir la app: https://defcarlosasnp.github.io/anatomed-3d/**
 
 ## Cómo usarlo
 
@@ -38,17 +38,17 @@ npm run build
 | Rotar / zoom / mover | Arrastrar, rueda, clic derecho (en el celular: 1 dedo, pellizcar, 2 dedos) |
 | Clic / doble clic | Información de la estructura / enfocarla |
 | Lista lateral | Mostrar u ocultar, buscar, aislar, restaurar; marca ✓ lo que ya revisaste y muestra tu progreso |
-| ✂ Corte | **Plano** o **tomografía** (lámina que se recorre corte a corte), sagital, transversal, coronal o inclinado; superficies de corte **rellenas** con el color de cada estructura |
+| Corte | **Plano** o **tomografía** (lámina que se recorre corte a corte), sagital, transversal, coronal o inclinado; superficies de corte **rellenas** con el color de cada estructura |
 | Cortes clínicos | Predefinidos por órgano: vistas ecocardiográficas (apical 4 cámaras, eje largo y corto), cortes de atlas del encéfalo, plano de Cantlie, coronal renal, etc. |
-| 📍 Puntos | Puntos de referencia clínicos numerados (focos de auscultación, cisuras, surcos, Calot, Brödel…) con su ficha |
-| ✏️ Nota | Clic en el modelo para dejar tus propias notas (se guardan en tu navegador) |
+| Puntos | Puntos de referencia clínicos numerados (focos de auscultación, cisuras, surcos, Calot, Brödel…) con su ficha |
+| Nota | Clic en el modelo para dejar tus propias notas (se guardan en tu navegador) |
 | ◐ Transparencia | Vuelve translúcida la capa externa de cada órgano |
-| 🏷 Etiquetas | Nombres sobre el modelo |
+| Etiquetas | Nombres sobre el modelo |
 | ▶ Animación | Latido, respiración, peristaltismo o flujo tubular, según el órgano |
-| 🧭 Recorrido | Guías paso a paso (con menú si hay varias) |
-| ☁ Mis datos | Exportar e importar un respaldo (.json) de notas y progreso, o pasarlos a otro dispositivo con un código QR o un enlace (los datos viajan dentro del enlace, sin servidor) |
-| ✨ Visual | Calidad alta (oclusión ambiental, sombra de contacto, contorno de selección) o básica para equipos modestos |
-| 🎯 Quiz | 4 modos: clic en la estructura, escribir el nombre, preguntas clínicas de alternativas y repaso de errores (repite más lo que fallas) |
+| Recorrido | Guías paso a paso (con menú si hay varias) |
+| Mis datos | Exportar e importar un respaldo (.json) de notas y progreso, o pasarlos a otro dispositivo con un código QR o un enlace (los datos viajan dentro del enlace, sin servidor) |
+| Visual | Calidad alta (oclusión ambiental, sombra de contacto, contorno de selección) o básica para equipos modestos |
+| Quiz | 4 modos: clic en la estructura, escribir el nombre, preguntas clínicas de alternativas y repaso de errores (repite más lo que fallas) |
 
 ## Estructura del proyecto
 
@@ -91,5 +91,5 @@ Si publicas la app, mantén estas atribuciones. Los modelos derivados de Z-Anato
 - **Elementos esquemáticos:** el sistema de conducción, las cuerdas tendinosas, las capas gástricas y la nefrona se generan por código. Son correctos en su organización, pero no son mallas anatómicas.
 - **Regiones del estómago:** son aproximadas. Se calculan a partir de los puntos de referencia de Z-Anatomy.
 - **Lado de los modelos:** el riñón es el izquierdo. Los núcleos del tálamo y de la amígdala están ocultos por defecto, porque se superponen a la estructura completa.
-- **Datos guardados:** las notas y el progreso se guardan en el navegador. Para llevarlos a otro equipo usa ☁ Mis datos (QR, enlace o archivo). Al importar se fusionan: se suman las revisadas, del quiz se conserva el máximo y en las notas gana la versión más reciente. No hay sincronización automática.
+- **Datos guardados:** las notas y el progreso se guardan en el navegador. Para llevarlos a otro equipo usa Mis datos (QR, enlace o archivo). Al importar se fusionan: se suman las revisadas, del quiz se conserva el máximo y en las notas gana la versión más reciente. No hay sincronización automática.
 - **Uso:** el contenido es de apoyo al estudio y no reemplaza la bibliografía de los ramos.

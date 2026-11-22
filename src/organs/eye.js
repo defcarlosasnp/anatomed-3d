@@ -14,7 +14,7 @@ export default {
   frame: ['sclera', 'm_lr', 'm_mr', 'm_sr', 'm_ir'],
   viewDir: [0.45, 0.2, 1],
   animation: 'accommodation',
-  extra: { id: 'gaze', label: '👀 Movimientos' },
+  extra: { id: 'gaze', label: 'Movimientos' },
   labelParts: ['cornea', 'iris', 'lens', 'sclera', 'optic_nerve', 'm_lr', 'm_sr', 'm_so'],
 
   groups: [
@@ -148,7 +148,7 @@ export default {
     {
       title: 'Movimientos oculares (prueba en H)',
       html: `
-<p>Activa <b>👀 Movimientos</b> y elige una posición de la mirada: el globo rota y se resalta el músculo que se explora en esa posición.</p>
+<p>Activa <b>Movimientos</b> y elige una posición de la mirada: el globo rota y se resalta el músculo que se explora en esa posición.</p>
 <table>
 <tr><th>Mirada</th><th>Músculo explorado</th><th>Nervio</th></tr>
 <tr><td>Afuera</td><td>Recto lateral</td><td>VI</td></tr>

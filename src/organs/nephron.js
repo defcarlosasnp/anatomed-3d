@@ -93,7 +93,7 @@ export default {
   build,
   xray: { groups: ['vasos'], label: 'Vasos' },
   animation: 'flow',
-  extra: { id: 'adh', label: '💧 ADH', defaultOn: true },
+  extra: { id: 'adh', label: 'ADH', defaultOn: true },
   labelParts: ['bowman', 'pct', 'dtl', 'atl', 'tal', 'md', 'dct', 'cd', 'vasa'],
 
   groups: [
@@ -163,7 +163,7 @@ export default {
     cd: {
       name: 'Túbulo conector y colector', en: 'Connecting tubule / collecting duct', group: 'colector', color: '#7cc4e8',
       desc: 'Recoge el líquido de varias nefronas y desciende por la médula hasta los conductos papilares (de Bellini). Tiene células principales e intercaladas (α y β).',
-      func: 'Células principales: reabsorben Na⁺ por ENaC (aldosterona), secretan K⁺ por ROMK y BK, y reabsorben agua por acuaporina-2 (ADH). Células intercaladas α: secretan H⁺ (H⁺-ATPasa, H⁺/K⁺-ATPasa). Células β: secretan HCO₃⁻. Pulsa 💧 ADH (con ▶ Flujo activo) para ver cómo cambia la orina.',
+      func: 'Células principales: reabsorben Na⁺ por ENaC (aldosterona), secretan K⁺ por ROMK y BK, y reabsorben agua por acuaporina-2 (ADH). Células intercaladas α: secretan H⁺ (H⁺-ATPasa, H⁺/K⁺-ATPasa). Células β: secretan HCO₃⁻. Pulsa ADH (con ▶ Flujo activo) para ver cómo cambia la orina.',
       clinic: 'Espironolactona y eplerenona (antagonistas de la aldosterona) y amilorida (bloquea ENaC) son diuréticos ahorradores de K⁺. El litio produce diabetes insípida nefrogénica. El SIADH causa hiponatremia por retención de agua.',
     },
     vasa: {
@@ -190,7 +190,7 @@ export default {
         { title: '5. Ramas ascendentes', parts: ['atl', 'tal'], text: 'Son impermeables al agua. La rama gruesa bombea NaCl (NKCC2) y diluye el líquido a ~100 mOsm/kg. Así se construye el gradiente medular.' },
         { title: '6. Mácula densa', parts: ['md', 'aff', 'eff'], text: 'Detecta el NaCl que llega. Si aumenta, contrae la aferente (retroalimentación tubuloglomerular); si baja, estimula la renina.' },
         { title: '7. Túbulo distal', parts: ['dct'], text: 'El NCC reabsorbe ~5 % del NaCl (sitio de acción de las tiazidas) y aquí se regula el Ca²⁺ por PTH. El líquido sigue diluido.' },
-        { title: '8. Colector y ADH', parts: ['cd'], text: 'Con ADH: entra acuaporina-2, el agua sale hacia la médula y la orina se concentra (hasta ~1200 mOsm/kg). Sin ADH: orina diluida (~50–100 mOsm/kg). Prueba el botón 💧 ADH con la animación activa.' },
+        { title: '8. Colector y ADH', parts: ['cd'], text: 'Con ADH: entra acuaporina-2, el agua sale hacia la médula y la orina se concentra (hasta ~1200 mOsm/kg). Sin ADH: orina diluida (~50–100 mOsm/kg). Prueba el botón ADH con la animación activa.' },
       ],
     },
   ],
@@ -202,7 +202,7 @@ export default {
       html: `
 <p>Pulsa <b>▶ Flujo</b>: las partículas son el líquido tubular y su color indica la osmolaridad.</p>
 <p><span style="color:#7cc4e8">■</span> ~100 mOsm/kg (diluido) · <span style="color:#f4f1d0">■</span> 300 mOsm/kg (igual al plasma) · <span style="color:#e8743b">■</span> ~1200 mOsm/kg (concentrado)</p>
-<p>La franja de fondo representa el intersticio: 300 mOsm/kg en la corteza y hasta 1200 en la papila. El botón <b>💧 ADH</b> simula la presencia o ausencia de vasopresina.</p>
+<p>La franja de fondo representa el intersticio: 300 mOsm/kg en la corteza y hasta 1200 en la papila. El botón <b>ADH</b> simula la presencia o ausencia de vasopresina.</p>
 <p class="small muted">Es un esquema didáctico: las proporciones y longitudes no son reales (una nefrona mide ~3–5 cm de largo y unos 20–60 µm de diámetro).</p>`,
     },
     {

@@ -16,7 +16,7 @@ export default {
   labelParts: ['ra', 'rv', 'la', 'lv', 'asc_ao', 'pt', 'svc', 'ivc', 'arch_ao'],
   xray: { groups: ['camaras'], label: 'Cámaras cardíacas' },
   animation: 'heartbeat',
-  extra: { id: 'conduction', label: '⚡ Conducción' },
+  extra: { id: 'conduction', label: 'Conducción' },
 
   groups: [
     { id: 'camaras', name: 'Cámaras cardíacas', color: '#b4473e' },
@@ -248,7 +248,7 @@ export default {
 <li><b>Nodo auriculoventricular (AV):</b> retrasa el impulso ~0,1 s para que las aurículas terminen de vaciarse antes de que se contraigan los ventrículos. Es el segmento PR del ECG (normal 0,12–0,20 s). Su ritmo intrínseco es de 40–60 lpm.</li>
 <li><b>Haz de His → ramas derecha e izquierda → fibras de Purkinje:</b> conducen muy rápido (2–4 m/s) para que los ventrículos se contraigan de forma sincrónica (QRS &lt; 0,12 s). El ritmo de escape de Purkinje es de 20–40 lpm.</li>
 </ul>
-<p>Con <b>⚡ Conducción</b> ves el impulso viajando por el modelo. El trayecto es esquemático: las fibras de conducción no son mallas en Z-Anatomy.</p>`,
+<p>Con <b>Conducción</b> ves el impulso viajando por el modelo. El trayecto es esquemático: las fibras de conducción no son mallas en Z-Anatomy.</p>`,
     },
     {
       title: 'Potenciales de acción',

@@ -183,7 +183,7 @@ function buildTree() {
     div.innerHTML = `
       <div class="group-head">
         <span class="caret">▾</span>
-        <button class="eye" title="Mostrar/ocultar grupo">👁</button>
+        <button class="eye" title="Mostrar/ocultar grupo">◉</button>
         <span class="swatch" style="background:${g.color}"></span>
         <span>${esc(g.name)}</span>
         <span class="count">${keys.length}</span>
@@ -195,7 +195,7 @@ function buildTree() {
       const row = document.createElement('div');
       row.className = 'item';
       row.dataset.key = k;
-      row.innerHTML = `<button class="eye" title="Mostrar/ocultar">👁</button><span class="swatch" style="background:#${p.baseColor.getHexString()}"></span><span class="name">${esc(p.info.name)}</span><span class="seen-mark" title="Revisada">✓</span>`;
+      row.innerHTML = `<button class="eye" title="Mostrar/ocultar">◉</button><span class="swatch" style="background:#${p.baseColor.getHexString()}"></span><span class="name">${esc(p.info.name)}</span><span class="seen-mark" title="Revisada">✓</span>`;
       row.querySelector('.eye').onclick = (e) => {
         e.stopPropagation();
         viewer.setVisible(k, !p.visible);
@@ -262,7 +262,7 @@ function buildSpecialGroups(tree) {
       row.onclick = () => select({ poi: poi.id }, true);
       return row;
     });
-  if (poiRows.length) mk('pois', '📍 Puntos clínicos', poiRows).classList.add('collapsed');
+  if (poiRows.length) mk('pois', 'Puntos clínicos', poiRows).classList.add('collapsed');
   const noteRows = Notes.list(organ.id).map((n) => {
     const row = document.createElement('div');
     row.className = 'item';
@@ -272,7 +272,7 @@ function buildSpecialGroups(tree) {
     row.onclick = () => select({ note: n.id });
     return row;
   });
-  mk('notes', '📝 Mis notas', noteRows, 'Usa ✏️ Nota en la barra inferior y haz clic en el modelo para dejar una nota.');
+  mk('notes', 'Mis notas', noteRows, 'Usa Nota en la barra inferior y haz clic en el modelo para dejar una nota.');
 }
 
 function syncTree() {
@@ -377,9 +377,9 @@ function renderNote(el) {
       <div class="en">${new Date(n.created).toLocaleString('es-CL')} · guardada solo en este navegador</div>
       <textarea id="note-text" rows="6" placeholder="Escribe tu nota (ej. «preguntaron esto en la prueba»)…">${esc(n.text)}</textarea>
       <div class="info-actions">
-        <button data-a="save" class="primary">💾 Guardar</button>
-        <button data-a="focus">🎯 Ir a la nota</button>
-        <button data-a="del">🗑 Borrar</button>
+        <button data-a="save" class="primary">Guardar</button>
+        <button data-a="focus">Ir a la nota</button>
+        <button data-a="del">Borrar</button>
       </div>
     </div>`;
   const ta = el.querySelector('#note-text');
@@ -406,9 +406,8 @@ function renderInfo() {
   if (!info) {
     el.innerHTML = `
       <div class="info-empty">
-        <span class="big">${organ?.icon || '🫀'}</span>
         Haz <b>clic</b> en una estructura del modelo o de la lista para ver su anatomía y fisiología.<br><br>
-        <span class="small">🖱 Arrastrar: rotar · Rueda: zoom · Clic derecho: mover · Doble clic: enfocar<br>📱 Un dedo: rotar · Pellizcar: zoom · Dos dedos: mover</span>
+        <span class="small">Arrastrar: rotar · Rueda: zoom · Clic derecho: mover · Doble clic: enfocar<br>Un dedo: rotar · Pellizcar: zoom · Dos dedos: mover</span>
       </div>`;
     return;
   }
@@ -421,9 +420,9 @@ function renderInfo() {
       ${info.func ? `<h4>Fisiología</h4><p>${esc(info.func)}</p>` : ''}
       ${info.clinic ? `<h4>Correlación clínica</h4><p class="clinic">${esc(info.clinic)}</p>` : ''}
       <div class="info-actions">
-        <button data-a="focus">🎯 Enfocar</button>
-        ${selection.region || selection.poi ? '' : '<button data-a="isolate">◎ Aislar</button><button data-a="hide">🚫 Ocultar</button>'}
-        <button data-a="showall">👁 Restaurar vista</button>
+        <button data-a="focus">Enfocar</button>
+        ${selection.region || selection.poi ? '' : '<button data-a="isolate">◎ Aislar</button><button data-a="hide">Ocultar</button>'}
+        <button data-a="showall">Restaurar vista</button>
       </div>
     </div>`;
   el.querySelectorAll('[data-a]').forEach((b) => {
@@ -510,7 +509,7 @@ function setNoteMode(on) {
   $('#btn-note').classList.toggle('on', on);
   viewer.renderer.domElement.classList.toggle('placing', on);
   $('#hud-top').querySelector('.note-hint')?.remove();
-  if (on) $('#hud-top').insertAdjacentHTML('beforeend', '<span class="chip note-hint">✏️ Haz clic en el modelo donde quieres la nota (Esc para cancelar)</span>');
+  if (on) $('#hud-top').insertAdjacentHTML('beforeend', '<span class="chip note-hint">Haz clic en el modelo donde quieres la nota (Esc para cancelar)</span>');
 }
 document.addEventListener('keydown', (e) => e.key === 'Escape' && noteMode && setNoteMode(false));
 
@@ -761,7 +760,7 @@ function openGazeMenu(btn) {
       pop.classList.add('hidden');
       $('#hud-top').querySelector('.gaze')?.remove();
       $('#btn-extra').classList.toggle('on', g.id !== 'primary');
-      if (g.id !== 'primary') $('#hud-top').insertAdjacentHTML('beforeend', `<span class="chip gaze">👀 ${esc(g.label)}: ${esc(g.text)}</span>`);
+      if (g.id !== 'primary') $('#hud-top').insertAdjacentHTML('beforeend', `<span class="chip gaze">${esc(g.label)}: ${esc(g.text)}</span>`);
     };
   });
   togglePop(btn, pop);
@@ -772,7 +771,7 @@ const isMobile = window.matchMedia('(pointer: coarse)').matches || window.innerW
 let quality = loadPref('anatomed.quality', isMobile ? 'low' : 'high');
 function applyQuality() {
   viewer.visuals.setQuality(quality);
-  $('#btn-quality').textContent = quality === 'high' ? '✨ Visual: alta' : '◻ Visual: básica';
+  $('#btn-quality').textContent = quality === 'high' ? 'Visual: alta' : 'Visual: básica';
   $('#btn-quality').title = quality === 'high' ? 'Oclusión ambiental, sombras y contorno de selección (requiere más GPU)' : 'Render simple (más rápido)';
 }
 $('#btn-quality').onclick = () => {

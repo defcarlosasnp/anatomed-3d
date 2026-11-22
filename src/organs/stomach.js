@@ -15,7 +15,7 @@ export default {
   frame: ['stomach', 'duodenum', 'pancreas'], // encuadre inicial (el esófago completo es muy largo)
   xray: { groups: ['organo'], label: 'Estómago' },
   animation: 'peristalsis',
-  extra: { id: 'regions', label: '🎨 Regiones', defaultOn: true },
+  extra: { id: 'regions', label: 'Regiones', defaultOn: true },
 
   groups: [
     { id: 'organo', name: 'Estómago', color: '#d98b7b' },
@@ -34,7 +34,7 @@ export default {
     },
     m_long: {
       name: 'Muscular externa — capa longitudinal', en: 'Longitudinal muscle layer', group: 'capas', color: '#b5544a', quiz: false, hidden: true, showOnClip: true, cap: false,
-      desc: 'Capa muscular lisa más externa (bajo la serosa), continuación de la longitudinal del esófago. Es más gruesa a lo largo de las curvaturas. Entre esta capa y la circular está el plexo mientérico (de Auerbach). Capa esquemática: aparece al activar ✂ Corte.',
+      desc: 'Capa muscular lisa más externa (bajo la serosa), continuación de la longitudinal del esófago. Es más gruesa a lo largo de las curvaturas. Entre esta capa y la circular está el plexo mientérico (de Auerbach). Capa esquemática: aparece al activar Corte.',
       func: 'Junto con la capa circular genera el peristaltismo. El plexo mientérico controla la motilidad, y las células intersticiales de Cajal (el marcapaso) se ubican entre las capas musculares.',
     },
     m_circ: {
@@ -188,7 +188,7 @@ export default {
 <tr><td>G</td><td>Antro</td><td>Gastrina</td></tr>
 <tr><td>D</td><td>Antro y cuerpo</td><td>Somatostatina (inhibe)</td></tr>
 </table>
-<p>Activa <b>🎨 Regiones</b> y haz clic en cada zona del estómago para ver qué hace.</p>`,
+<p>Activa <b>Regiones</b> y haz clic en cada zona del estómago para ver qué hace.</p>`,
     },
     {
       title: 'Secreción de HCl (célula parietal)',

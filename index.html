@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AnatoMed 3D</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫀</text></svg>" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='%2335c2b0'/></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
@@ -13,8 +13,8 @@
       <button class="icon-btn mobile-only" id="btn-left" aria-label="Estructuras">☰</button>
       <div class="brand">AnatoMed <span>3D</span></div>
       <nav class="organ-tabs" id="organ-tabs"></nav>
-      <button class="quality-btn" id="btn-data" title="Respaldar o pasar tus notas y progreso a otro dispositivo">☁ Mis datos</button>
-      <button class="quality-btn" id="btn-quality">✨ Visual: alta</button>
+      <button class="quality-btn" id="btn-data" title="Respaldar o pasar tus notas y progreso a otro dispositivo">Mis datos</button>
+      <button class="quality-btn" id="btn-quality">Visual: alta</button>
       <button class="icon-btn mobile-only" id="btn-right" aria-label="Información">ⓘ</button>
     </header>
 
@@ -59,14 +59,14 @@
         </div>
 
         <div class="toolbar" id="toolbar">
-          <button data-act="reset" title="Restablecer vista">⟲ Vista</button>
-          <button data-act="labels" title="Etiquetas" class="toggle" id="btn-labels">🏷 Etiquetas</button>
-          <button data-act="pois" title="Puntos clínicos" class="toggle" id="btn-pois">📍 Puntos</button>
-          <button data-act="note" title="Agregar una nota en el modelo" class="toggle" id="btn-note">✏️ Nota</button>
+          <button data-act="reset" title="Restablecer vista">Vista</button>
+          <button data-act="labels" title="Etiquetas" class="toggle" id="btn-labels">Etiquetas</button>
+          <button data-act="pois" title="Puntos clínicos" class="toggle" id="btn-pois">Puntos</button>
+          <button data-act="note" title="Agregar una nota en el modelo" class="toggle" id="btn-note">Nota</button>
           <div class="tool-group">
-            <button data-act="clip" class="toggle" id="btn-clip" title="Plano de corte">✂ Corte</button>
+            <button data-act="clip" class="toggle" id="btn-clip" title="Plano de corte">Corte</button>
             <div class="tool-pop hidden" id="clip-pop">
-              <div class="pop-head"><b>✂ Corte</b><button class="x" id="clip-pop-close" title="Cerrar panel (el corte sigue activo)">✕</button></div>
+              <div class="pop-head"><b>Corte</b><button class="x" id="clip-pop-close" title="Cerrar panel (el corte sigue activo)">✕</button></div>
               <div class="seg" id="clip-mode">
                 <button data-mode="plane" class="on">Plano</button><button data-mode="slab">Tomografía (lámina)</button>
               </div>
@@ -91,7 +91,7 @@
             </div>
           </div>
           <div class="tool-group">
-            <button data-act="xray" class="toggle" id="btn-xray" title="Transparencia de la capa externa">◐ Transparencia</button>
+            <button data-act="xray" class="toggle" id="btn-xray" title="Transparencia de la capa externa">Transparencia</button>
             <div class="tool-pop hidden" id="xray-pop">
               <div class="pop-head"><span class="small muted" id="xray-label">Capa externa</span><button class="x" id="xray-pop-close" title="Cerrar panel">✕</button></div>
               <input type="range" id="xray-val" min="5" max="100" value="25" />
@@ -101,9 +101,9 @@
           <button data-act="anim" class="toggle" id="btn-anim">▶ Animar</button>
           <button data-act="extra" class="toggle hidden" id="btn-extra"></button>
           <div class="tool-pop menu hidden" id="gaze-pop"></div>
-          <button data-act="tour" id="btn-tour">🧭 Recorrido</button>
+          <button data-act="tour" id="btn-tour">Recorrido</button>
           <div class="tool-pop menu hidden" id="tour-pop"></div>
-          <button data-act="quiz" id="btn-quiz">🎯 Quiz</button>
+          <button data-act="quiz" id="btn-quiz">Quiz</button>
           <div class="tool-pop menu hidden" id="quiz-pop"></div>
         </div>
       </section>
@@ -124,25 +124,25 @@
 
     <div class="modal hidden" id="data-modal" role="dialog" aria-modal="true" aria-labelledby="data-title">
       <div class="modal-box">
-        <div class="modal-head"><h3 id="data-title">☁ Mis datos de estudio</h3><button class="x" id="data-close" aria-label="Cerrar">✕</button></div>
+        <div class="modal-head"><h3 id="data-title">Mis datos de estudio</h3><button class="x" id="data-close" aria-label="Cerrar">✕</button></div>
         <p class="small muted" id="data-summary"></p>
         <section>
           <h4>Pasar a otro dispositivo</h4>
           <p class="small muted">Escanea el código con la cámara del celular, o copia el enlace y ábrelo en el otro equipo. Tus notas y tu progreso se fusionan con lo que ya tengas allí. Los datos van dentro del enlace: no se suben a ningún servidor.</p>
           <div class="qr-wrap"><canvas id="data-qr"></canvas><p class="small" id="data-qr-msg"></p></div>
-          <div class="row"><button id="data-copy">🔗 Copiar enlace</button><button id="data-share" class="hidden">📤 Compartir</button></div>
+          <div class="row"><button id="data-copy">Copiar enlace</button><button id="data-share" class="hidden">Compartir</button></div>
         </section>
         <section>
           <h4>Respaldo en archivo</h4>
           <p class="small muted">Guarda un archivo .json con todo (sirve aunque tengas muchas notas) e impórtalo en cualquier navegador.</p>
           <div class="row">
-            <button id="data-export" class="primary">⬇ Exportar respaldo</button>
-            <label class="btn">⬆ Importar respaldo<input type="file" id="data-import" accept=".json,application/json" hidden /></label>
+            <button id="data-export" class="primary">Exportar respaldo</button>
+            <label class="btn">Importar respaldo<input type="file" id="data-import" accept=".json,application/json" hidden /></label>
           </div>
         </section>
         <section>
           <h4>Borrar</h4>
-          <button id="data-reset" class="danger">🗑 Borrar todo mi progreso y notas de este navegador</button>
+          <button id="data-reset" class="danger">Borrar todo mi progreso y notas de este navegador</button>
         </section>
       </div>
     </div>
